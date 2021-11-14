@@ -1,7 +1,7 @@
 {
   "name": "omnifurni",
   "version": "1.0.0",
-  "description": "",
+  "description": "For running frontend and backend concurrently",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
