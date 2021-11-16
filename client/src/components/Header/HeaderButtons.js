@@ -1,0 +1,36 @@
+import React from "react";
+
+import { Link as RouterLink } from "react-router-dom";
+
+//////////////////////////////////
+// MUI imports
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
+
+/////////////////////////////////
+// Styled Components
+import { styled } from "@mui/material/styles";
+
+const ButtonsBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    display: "none",
+  },
+}));
+
+const HeaderButtons = () => {
+  return (
+    <ButtonsBox sx={{ display: "flex", gap: 2 }}>
+      <Link to="/login" component={RouterLink} underline="none">
+        <Button variant="outlined">Login</Button>
+      </Link>
+      <Link to="/register" component={RouterLink} underline="none">
+        <Button variant="contained" disableElevation>
+          Register
+        </Button>
+      </Link>
+    </ButtonsBox>
+  );
+};
+
+export default HeaderButtons;
