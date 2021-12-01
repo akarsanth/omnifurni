@@ -1,8 +1,12 @@
+// reading environmetal variable file
+import dotenv from "dotenv";
+dotenv.config();
+
 const dbConfig = {
   HOST: "localhost",
-  USER: "root",
-  PASSWORD: "Vespa125",
-  DB: "omnifurni",
+  USER: process.env.DB_USER,
+  PASSWORD: process.env.DB_PASS,
+  DB: process.env.DB_NAME,
   dialect: "mysql",
   pool: {
     max: 5,

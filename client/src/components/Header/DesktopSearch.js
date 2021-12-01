@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 //////////////////////////////////
 // MUI imports
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
+import Button from "@mui/material/Button";
 /////////////////////////////////
 // Styled Components
 import { styled, alpha } from "@mui/material/styles";
@@ -11,7 +13,7 @@ import { styled, alpha } from "@mui/material/styles";
 ///////////////////////////////////////////
 // Search Component
 const Search = styled("div")(({ theme }) => ({
-  position: "relative",
+  // position: "relative",
   border: `0.5px solid ${theme.palette.grey[100]}`,
   borderRadius: "25px",
   borderColor: theme.palette.secondary.main,
@@ -30,22 +32,34 @@ const Search = styled("div")(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
     display: "none",
   },
+  overflow: "hidden",
 }));
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
+
+const Form = styled("form")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 }));
+
+const SearchIconButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(0),
+  height: "100%",
+  pointerEvents: "cursor",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: theme.palette.text.secondary,
+
+  "&:hover": {
+    backgroundColor: "transparent",
+  },
+
+  transform: `translateX(-${theme.spacing(0.5)})`,
+}));
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("sm")]: {
@@ -53,20 +67,36 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
   width: "100%",
+  transform: `translateX(-${theme.spacing(1.5)})`,
 }));
+
 // Search Component
 ////////////////////////////////////////////////
 
 const DesktopSearchBar = () => {
+  const navigate = useNavigate();
+
+  const [searchText, setSearchText] = useState("");
+
+  const searchHandler = (e) => {
+    e.preventDefault();
+
+    if (!searchText) return;
+    navigate("/search");
+  };
   return (
     <Search>
-      <SearchIconWrapper>
-        <SearchIcon color="text.secondary" />
-      </SearchIconWrapper>
-      <StyledInputBase
-        placeholder="Search product...."
-        inputProps={{ "aria-label": "search" }}
-      />
+      <Form onSubmit={searchHandler} noValidate autoComplete="off">
+        <SearchIconButton disabled={!searchText}>
+          <SearchIcon />
+        </SearchIconButton>
+        <StyledInputBase
+          placeholder="Search product...."
+          inputProps={{ "aria-label": "search" }}
+          onChange={(e) => setSearchText(e.target.value)}
+          value={searchText}
+        />
+      </Form>
     </Search>
   );
 };

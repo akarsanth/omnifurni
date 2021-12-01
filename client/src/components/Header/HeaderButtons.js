@@ -21,10 +21,10 @@ const ButtonsBox = styled(Box)(({ theme }) => ({
 const HeaderButtons = () => {
   return (
     <ButtonsBox sx={{ display: "flex", gap: 2 }}>
-      <Link to="/login" component={RouterLink} underline="none">
+      <Link to="login" component={RouterLink} underline="none">
         <Button variant="outlined">Login</Button>
       </Link>
-      <Link to="/register" component={RouterLink} underline="none">
+      <Link to="register" component={RouterLink} underline="none">
         <Button variant="contained" disableElevation>
           Register
         </Button>

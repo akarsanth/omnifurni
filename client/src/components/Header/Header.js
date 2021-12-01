@@ -19,6 +19,7 @@ import Badge from "@mui/material/Badge";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Link from "@mui/material/Link";
+// import { SwipeableDrawer } from "@mui/material";
 
 // navbar logo
 import logo from "../../assets/omnifurni.png";
@@ -94,8 +95,12 @@ const Header = () => {
               >
                 <SearchOutlinedIcon />
               </IconButton>
+
+              {/* <SwipeableDrawer fullWidth></SwipeableDrawer> */}
+
+              {/* Cart Icon */}
               <IconButton edge="start" aria-label="menu">
-                <Badge badgeContent={4} color="primary">
+                <Badge badgeContent={1} color="primary">
                   <ShoppingCartOutlinedIcon fontSize="medium" />
                 </Badge>
               </IconButton>
