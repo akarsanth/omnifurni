@@ -3,10 +3,43 @@ import passportGoogle from "passport-google-oauth20";
 
 const GoogleStrategy = passportGoogle.Strategy;
 
-import User from "../models/user-model.js";
+import db from "../models/index.js";
+const User = db.user;
 
 const GOOGLE_CALLBACK_URL = "http://localhost:5000/api/v1/auth/google/callback";
 
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: GOOGLE_CALLBACK_URL,
+    },
+    async (req, accessToken, refreshToken, profile, done) => {
+      console.log(profile);
+      const defaultUser = {
+        first_name: profile.name.givenName,
+        last_name: profile.name.familyName,
+        email: profile.emails[0].value,
+        // picture: profile.photos[0].value,
+        googleId: profile.id,
+      };
+
+      // find or create
+      const user = await User.findOrCreate({
+        where: { googleId: profile.id },
+        defaults: defaultUser,
+      }).catch((err) => {
+        console.log("Error signing up", err);
+        done(err, false);
+      });
+
+      if (user && user[0]) return done(null, user && user[0]);
+    }
+  )
+);
+
+// These functions are required for getting data To/from JSON returned from Providers
 passport.serializeUser((user, done) => {
   // this function creates an cookie
   // and the cookie will have an id
@@ -38,31 +71,5 @@ passport.deserializeUser(async (id, done) => {
   if (user) done(null, user);
 });
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: GOOGLE_CALLBACK_URL,
-    },
-    async (req, accessToken, refreshToken, profile, done) => {
-      const defaultUser = {
-        fullName: `${profile.name.givenName} ${profile.name.familyName}`,
-        email: profile.emails[0].value,
-        picture: profile.photos[0].value,
-        googleId: profile.id,
-      };
-
-      // find or create
-      const user = await User.findOrCreate({
-        where: { googleId: profile.id },
-        defaults: defaultUser,
-      }).catch((err) => {
-        console.log("Error signing up", err);
-        done(err, false);
-      });
-
-      if (user && user[0]) return done(null, user && user[0]);
-    }
-  )
-);
+// important source
+// https://medium.com/@rustyonrampage/using-oauth-2-0-along-with-jwt-in-node-express-9e0063d911ed

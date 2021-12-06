@@ -2,11 +2,13 @@ import {
   userAuthRequest,
   userAuthSuccess,
   userAuthFail,
+  setIsAuthenticated,
+  setUserInfo,
 } from "./authUser-slice";
 
 // importing axios
 import axios from "axios";
-import { userRegisterSuccess } from "../userRegister/userRegister-slice";
+// import { userRegisterSuccess } from "../userRegister/userRegister-slice";
 
 export const authUser = (loginDetails) => {
   return async (dispatch) => {
@@ -19,8 +21,8 @@ export const authUser = (loginDetails) => {
       // req body configurations
       const config = {
         headers: {
-          // "Content-Type": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
+          // "Content-Type": "application/x-www-form-urlencoded",
         },
       };
 
@@ -33,13 +35,17 @@ export const authUser = (loginDetails) => {
         { email, password },
         config
       );
-
       dispatch(userAuthSuccess(data.message));
       console.log("After user auth success");
 
-      console.log(data);
+      console.log(data.token);
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      localStorage.setItem("token", JSON.stringify(data.token));
+
+      console.log("here");
+
+      // to fetch user data
+      dispatch(fetchAuthUser());
     } catch (error) {
       // the error is first handled in
       // custom error handler in errorMiddlewares.js
@@ -49,6 +55,40 @@ export const authUser = (loginDetails) => {
           : error.message;
       dispatch(userAuthFail(errorMessage));
       console.log("after user auth fail");
+    }
+  };
+};
+
+export const fetchAuthUser = () => {
+  return async (dispatch) => {
+    const token = localStorage.getItem("token");
+
+    // token configuration
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+
+        Authorization: `Bearer ${JSON.parse(token)}`,
+      },
+    };
+
+    const response = await axios
+      .get("http://localhost:5000/api/v1/auth/user", config) // with credential
+      .catch((err) => {
+        console.log(err);
+        console.log("Not properly authenticated!");
+        // navigate("/login/error");
+      });
+
+    if (response && response.data) {
+      console.log("User:", response.data);
+
+      dispatch(setIsAuthenticated(true));
+
+      dispatch(setUserInfo(response.data));
+      // navigate("/welcome");
+
+      localStorage.setItem("userInfo", response.data);
     }
   };
 };

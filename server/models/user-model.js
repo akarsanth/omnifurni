@@ -15,7 +15,7 @@ export default (sequelize, Sequelize) => {
 
       contact_number: {
         type: DataTypes.STRING,
-        allowNull: false,
+        // allowNull: false,
       },
 
       googleId: {
@@ -34,7 +34,6 @@ export default (sequelize, Sequelize) => {
 
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
     },
     {

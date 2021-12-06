@@ -3,10 +3,6 @@ import passportJWT from "passport-jwt";
 const ExtractJwt = passportJWT.ExtractJwt;
 const JWTStrategy = passportJWT.Strategy;
 
-// import { keys } from "./keys.js";
-
-console.log("In passwort jwt");
-
 import db from "../models/index.js";
 const User = db.user;
 

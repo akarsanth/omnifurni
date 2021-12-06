@@ -76,7 +76,9 @@ const loginUser = asyncHandler(async (req, res) => {
     expiresIn: "2d",
   });
 
-  res.json({ message: "Welcome Back!", token: jwtToken });
+  res.cookie("token", jwtToken);
+  // .json({ userInfo: user });
+  // .json({ token: jwtToken });
 });
 
 export { registerUser, loginUser };

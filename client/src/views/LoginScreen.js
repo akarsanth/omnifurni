@@ -6,7 +6,10 @@ import { Link as RouterLink } from "react-router-dom";
 ///////////////////////////////////
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { authUser } from "../app/features/authUser/authUser-actions";
+import {
+  authUser,
+  fetchAuthUser,
+} from "../app/features/authUser/authUser-actions";
 
 //////////////////////////////////
 // FORMIK and YUP
@@ -18,6 +21,7 @@ import * as Yup from "yup";
 import FormContainer, { FormLink } from "../components/FormContainer";
 import Textfield from "../components/FormsUI/Textfield/index";
 import Button from "../components/FormsUI/Button";
+import GoogleButton from "react-google-button";
 
 //////////////////////////////////
 // MUI imports
@@ -71,9 +75,38 @@ const LoginScreen = () => {
     event.preventDefault();
   };
 
+  // for redirect
+  const redirectToGoogleSSO = async () => {
+    // variable to store our timer
+    let timer = null;
+
+    const googleLoginURL = "http://localhost:5000/api/v1/auth/login/google";
+    const newWindow = window.open(
+      googleLoginURL,
+      "_blank",
+      "width=600, height=600"
+    );
+
+    // if there is new window
+    if (newWindow) {
+      // check every half second if window is closed
+      // if window is closed clear the interval
+      timer = setInterval(() => {
+        console.log("here");
+        if (newWindow.closed) {
+          console.log("Yay, we are authenticated");
+          // fetchAuthUser();
+          // dispatch(fetchAuthUser());
+
+          // release timer from the variable
+          if (timer) clearInterval(timer);
+        }
+      }, 500);
+    }
+  };
+
   // login submit handler
   const submitHandler = (values) => {
-    console.log(values);
     dispatch(authUser(values));
   };
 
@@ -144,6 +177,8 @@ const LoginScreen = () => {
           </SignUpForm>
         </Form>
       </Formik>
+
+      <GoogleButton onClick={redirectToGoogleSSO} />
     </FormContainer>
   );
 };
