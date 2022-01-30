@@ -1,9 +1,20 @@
 import express from "express";
 const router = express.Router();
-import passport from "passport";
-import jwt from "jsonwebtoken";
 
-import { registerUser, loginUser } from "../controllers/user-controllers.js";
+import {
+  registerUser,
+  activateEmail,
+  loginUser,
+  logout,
+  getAccessToken,
+  forgotPassword,
+  resetPassword,
+  getUserInfo,
+  getAllUsersInfo,
+} from "../controllers/user-controllers.js";
+
+import auth from "../middlewares/auth.js";
+import authAdmin from "../middlewares/authAdmin.js";
 
 // auth middleware
 // to check if user is authenticated
@@ -12,50 +23,23 @@ import { registerUser, loginUser } from "../controllers/user-controllers.js";
 
 // normal user login
 router.post("/register", registerUser);
+router.post("/activation", activateEmail);
+
+// refresh token is set in loginUser
 router.post("/login", loginUser);
+router.get("/logout", logout);
+router.post("/refreshToken", getAccessToken);
 
-// login with google
-router.get(
-  "/login/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// forget and reset
+router.post("/forgot", forgotPassword);
 
-// callback route for google to redirect to
-// after user allows the permission
-// passport.authenticate("google") takes the callback profile code
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    failureMessage: "Cannot login to Google, please try again later!",
-    // failureRedirect: errorLoginUrl,
-    // successRedirect: successLoginUrl,
-  }),
-  (req, res) => {
-    // // user comes from deserialize
-    // console.log("User: ", req.user);
-    // res.send("Thank you for signing in");
+// access token and password will be passed
+// password as body
+// access token as authorization header
+router.post("/reset", auth, resetPassword);
 
-    // generating jwt token
-    const jwtToken = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
-      expiresIn: "2d",
-    });
-
-    res
-      // .cookie("token", jwtToken)
-      // .json({ userInfo: user });
-      .json({ token: jwtToken });
-  }
-);
-
-// to get user data
-router.get(
-  "/user",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.json(req.user);
-  }
-);
-
-// google login
+// get user info
+router.get("/info", auth, getUserInfo);
+router.get("/allUsersInfo", auth, authAdmin, getAllUsersInfo);
 
 export default router;

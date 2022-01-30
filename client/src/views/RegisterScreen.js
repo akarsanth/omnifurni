@@ -9,12 +9,16 @@ import { registerUser } from "../app/features/userRegister/userRegister-actions"
 
 //////////////////////////////////
 // FORMIK and YUP
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
+import { Formik, Form as FormikForm } from "formik";
+import {
+  INITIAL_REGISTER_FORM_STATE,
+  REGISTER_FORM_VALIDATION,
+} from "../components/FormsUI/YupFormik";
 
 //////////////////////////////////
 // Component Import
-import FormContainer, { FormLink } from "../components/FormContainer";
+import FormContainer, { FormLink } from "../components/FormsUI/FormContainer";
+import FormFields from "../components/FormsUI/FormFieldsWrapper";
 import Textfield from "../components/FormsUI/Textfield";
 import Button from "../components/FormsUI/Button";
 
@@ -33,44 +37,10 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 // Styled Components
 import { styled } from "@mui/material/styles";
 
-const RegisterForm = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing(3),
-}));
-
 const NameFields = styled(Box)(({ theme }) => ({
   display: "flex",
   gap: theme.spacing(3),
 }));
-
-// FORM INITIAL STATE AND VALIDATION
-const INITIAL_REGISTER_FORM_STATE = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  contactNumber: "",
-  password: "",
-  confirmPassword: "",
-};
-
-const REGISTER_FORM_VALIDATION = Yup.object().shape({
-  firstName: Yup.string().required("Required Field"),
-  lastName: Yup.string().required("Required Field"),
-  contactNumber: Yup.number()
-    .integer()
-    .typeError("Please enter a valid phone number")
-    .required("Required Field"),
-  email: Yup.string().required("Required Field").email("Invalid email address"),
-  password: Yup.string().required("Required Field"),
-  // .matches(
-  //   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-  //   "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
-  // ),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Required Field"),
-});
 
 /////////////////////////////////////////
 // MAIN Component
@@ -87,7 +57,6 @@ const RegisterScreen = () => {
   const { isLoading, error, successMessage } = useSelector(
     (state) => state.userRegister
   );
-  console.log(isLoading, error, successMessage);
 
   const handleClickShowPassword = () => {
     setValues({
@@ -103,11 +72,15 @@ const RegisterScreen = () => {
     });
   };
 
+  ///////////////////////////////
   // register button handler
-  const submitHandler = (values) => {
+  const submitHandler = (values, { resetForm }) => {
     const registrationDetails = values;
-
     dispatch(registerUser(registrationDetails));
+
+    setTimeout(() => {
+      if (successMessage) resetForm({ values: "" });
+    }, 2000);
   };
 
   return (
@@ -125,8 +98,8 @@ const RegisterScreen = () => {
         validationSchema={REGISTER_FORM_VALIDATION}
         onSubmit={submitHandler}
       >
-        <Form>
-          <RegisterForm>
+        <FormikForm>
+          <FormFields>
             <NameFields>
               <Textfield label="First Name" name="firstName" required />
 
@@ -203,8 +176,8 @@ const RegisterScreen = () => {
               <Alert severity="success">{successMessage}</Alert>
             )}
             {error && <Alert severity="error">{error}</Alert>}
-          </RegisterForm>
-        </Form>
+          </FormFields>
+        </FormikForm>
       </Formik>
     </FormContainer>
   );

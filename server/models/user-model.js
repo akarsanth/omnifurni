@@ -4,10 +4,17 @@ export default (sequelize, Sequelize) => {
   const User = sequelize.define(
     "user",
     {
+      user_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+
       first_name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
+
       last_name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -15,16 +22,12 @@ export default (sequelize, Sequelize) => {
 
       contact_number: {
         type: DataTypes.STRING,
-        // allowNull: false,
+        allowNull: false,
       },
 
-      googleId: {
-        type: DataTypes.STRING,
-      },
-
-      isAdmin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
+      role: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
 
       email: {
@@ -34,10 +37,11 @@ export default (sequelize, Sequelize) => {
 
       password: {
         type: DataTypes.STRING,
+        allowNull: false,
       },
     },
     {
-      freezeTableName: true,
+      timestamps: true,
     }
   );
 

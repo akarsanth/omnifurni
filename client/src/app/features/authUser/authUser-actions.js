@@ -8,7 +8,6 @@ import {
 
 // importing axios
 import axios from "axios";
-// import { userRegisterSuccess } from "../userRegister/userRegister-slice";
 
 export const authUser = (loginDetails) => {
   return async (dispatch) => {
@@ -16,7 +15,6 @@ export const authUser = (loginDetails) => {
 
     try {
       dispatch(userAuthRequest());
-      console.log("after user auth request");
 
       // req body configurations
       const config = {
@@ -31,21 +29,16 @@ export const authUser = (loginDetails) => {
       // data will come from backend server
       // data => message + token
       const { data } = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
+        "/api/v1/auth/login",
         { email, password },
         config
       );
       dispatch(userAuthSuccess(data.message));
-      console.log("After user auth success");
 
-      console.log(data.token);
+      dispatch(setIsAuthenticated(true));
 
-      localStorage.setItem("token", JSON.stringify(data.token));
-
-      console.log("here");
-
-      // to fetch user data
-      dispatch(fetchAuthUser());
+      // from mern-auth
+      localStorage.setItem("firstLogin", true);
     } catch (error) {
       // the error is first handled in
       // custom error handler in errorMiddlewares.js
@@ -54,41 +47,36 @@ export const authUser = (loginDetails) => {
           ? error.response.data.message
           : error.message;
       dispatch(userAuthFail(errorMessage));
-      console.log("after user auth fail");
     }
   };
 };
 
-export const fetchAuthUser = () => {
+// called after getting the token from cookie
+export const fetchAuthUser = (token) => {
   return async (dispatch) => {
-    const token = localStorage.getItem("token");
+    const response = await axios.get("/api/v1/auth/info", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-    // token configuration
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
+    dispatch(
+      setUserInfo({
+        user: response.data,
+        isAdmin: response.data.role === 1 ? true : false,
+      })
+    );
 
-        Authorization: `Bearer ${JSON.parse(token)}`,
-      },
-    };
+    dispatch(setIsAuthenticated(true));
+  };
+};
 
-    const response = await axios
-      .get("http://localhost:5000/api/v1/auth/user", config) // with credential
-      .catch((err) => {
-        console.log(err);
-        console.log("Not properly authenticated!");
-        // navigate("/login/error");
-      });
-
-    if (response && response.data) {
-      console.log("User:", response.data);
-
-      dispatch(setIsAuthenticated(true));
-
-      dispatch(setUserInfo(response.data));
-      // navigate("/welcome");
-
-      localStorage.setItem("userInfo", response.data);
+export const logout = () => {
+  return async (dispatch) => {
+    try {
+      await axios.get("/api/v1/auth/logout");
+      localStorage.removeItem("firstLogin");
+      window.location.href = "/";
+    } catch (err) {
+      window.location.href = "/";
     }
   };
 };

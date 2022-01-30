@@ -15,19 +15,15 @@ const authUserSlice = createSlice({
   reducers: {
     userAuthRequest(state) {
       state.isLoading = true;
-      state.message = null;
-      state.error = null;
     },
 
     userAuthSuccess(state, action) {
-      // console.log("In success");
       state.isLoading = false;
       state.message = action.payload;
       state.error = null;
     },
 
     userAuthFail(state, action) {
-      console.log(action.payload);
       state.isLoading = false;
       state.error = action.payload;
       state.message = null;
@@ -38,7 +34,8 @@ const authUserSlice = createSlice({
     },
 
     setUserInfo(state, action) {
-      state.userInfo = action.payload;
+      state.userInfo = action.payload.user;
+      state.userInfo.isAdmin = action.payload.isAdmin;
     },
   },
 });
@@ -51,10 +48,4 @@ export const {
   setUserInfo,
 } = authUserSlice.actions;
 
-// exporting auth user reducers
 export default authUserSlice.reducer;
-
-// export const getCurrentPostLikes = () => async dispatch => {
-//   const response = await axios.get(`/api/get_post_likes/2`);
-//   dispatch({ type: GET_POST_LIKES, payload: response.data.likes });
-// };

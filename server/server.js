@@ -3,9 +3,8 @@ import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
-import passport from "passport";
-// import cookieSession from "cookie-session";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 
 // importing error middlewares
 import { notFound, errorHandler } from "./middlewares/error-middlewares.js";
@@ -15,10 +14,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // db connection from index.js file
-import db from "./models/index.js";
+// import db from "./models/index.js";
 
 import("./config/passportJWT-setup.js");
-import("./config/passportGoogle-setup.js");
 
 // create app through express
 const app = express();
@@ -27,31 +25,18 @@ const app = express();
 // to handle HTTP POST POST requests
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 
 // morgan, helmet and cors
 app.use(morgan("dev"));
 app.use(helmet());
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
-
+app.use(cors());
 app.use(cookieParser());
-// res.cookie("cookieName", "cookieValue");
-// app.use(
-//   cookieSession({
-//     maxAge: 24 * 60 * 60 * 1000,
-//     keys: ["hello"],
-//   })
-// );
-
-// --------------- PASSPORT SETUP ---------------------//
-// passport. initialize() is a middle-ware that initialises Passport
-app.use(passport.initialize());
-/* 
-passport. session() acts as a middleware to alter the req object
-and change the 'user' value that is currently the session id 
-(from the client cookie) into the true deserialized user object.
-*/
-// app.use(passport.session());
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 
 // create home route
 app.get("/", (req, res) => {

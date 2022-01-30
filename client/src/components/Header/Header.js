@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Link as RouterLink } from "react-router-dom";
+
+//////////////////////////////////
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCartData } from "../../app/features/cart/cart-actions";
 
 /////////////////////////////////
 // Components
 import HeaderButtons from "./HeaderButtons";
 import DesktopSearchBar from "./DesktopSearch";
+import CategoryMenu from "./CategoryMenu";
+import MyAccountMenu from "./MyAccountMenu";
 
 //////////////////////////////////
 // MUI imports
@@ -54,8 +61,22 @@ const NavBar = styled(AppBar)({
 /////////////////////////////////
 // Header Component
 const Header = () => {
+  const dispatch = useDispatch();
+
+  const { userInfo } = useSelector((state) => state.authUser);
+
+  const { totalQuantity } = useSelector((state) => state.cart);
+
+  const { token } = useSelector((state) => state.token);
+
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(fetchCartData(token));
+    }
+  }, [userInfo, dispatch, token]);
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box>
       <NavBar
         position="static"
         sx={{
@@ -68,7 +89,7 @@ const Header = () => {
         }}
       >
         <Container>
-          <Toolbar disableGutters sx={{ display: "flex" }}>
+          <Toolbar disableGutters sx={{ display: "flex", gap: 4 }}>
             <IconButton
               size="large"
               edge="start"
@@ -83,6 +104,8 @@ const Header = () => {
                 <BrandLogo src={logo} alt="brand logo" />
               </Link>
             </LogoBox>
+
+            <CategoryMenu />
 
             <DesktopSearchBar />
 
@@ -99,14 +122,20 @@ const Header = () => {
               {/* <SwipeableDrawer fullWidth></SwipeableDrawer> */}
 
               {/* Cart Icon */}
-              <IconButton edge="start" aria-label="menu">
-                <Badge badgeContent={1} color="primary">
+              <IconButton
+                edge="start"
+                aria-label="menu"
+                component={RouterLink}
+                to="/cart"
+              >
+                <Badge badgeContent={totalQuantity} color="primary" showZero>
                   <ShoppingCartOutlinedIcon fontSize="medium" />
                 </Badge>
               </IconButton>
 
               {/* Materil UI Link (all styling) but works like RouterLink */}
-              <HeaderButtons />
+
+              {userInfo ? <MyAccountMenu /> : <HeaderButtons />}
             </HeaderRight>
           </Toolbar>
         </Container>

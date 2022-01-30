@@ -24,13 +24,12 @@ export const registerUser = (registrationDetails) => {
 
       // data from response (res from backend)
       const { data } = await axios.post(
-        "http://localhost:5000/api/v1/auth/register",
+        "/api/v1/auth/register",
         { firstName, lastName, contactNumber, email, password },
         config
       );
 
       dispatch(userRegisterSuccess(data.message));
-      console.log(data);
     } catch (error) {
       // the error is first handled in
       // custom error handler in errorMiddlewares.js

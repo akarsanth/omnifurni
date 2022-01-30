@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 
 // MUI import
 import Link from "@mui/material/Link";
+import Container from "@mui/material/Container";
 
 /////////////////////////////////
 // Styled Components
@@ -16,27 +17,29 @@ export const FormLink = styled(Link)(({ theme }) => ({
 
 const FormContainer = ({ children }) => {
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      sx={{ mt: 6, mb: 6 }}
-    >
+    <Container>
       <Grid
-        item
-        xs={12}
-        md={8}
-        lg={5.5}
-        sx={{
-          py: 3,
-          px: { xs: 2, sm: 5 },
-          border: "primary.main",
-          boxShadow: 2,
-        }}
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{ mt: 10, mb: 10 }}
       >
-        {children}
+        <Grid
+          item
+          xs={12}
+          md={8}
+          lg={5.5}
+          sx={{
+            py: 3,
+            px: { xs: 2, sm: 5 },
+            border: "primary.main",
+            boxShadow: 2,
+          }}
+        >
+          {children}
+        </Grid>
       </Grid>
-    </Grid>
+    </Container>
   );
 };
 

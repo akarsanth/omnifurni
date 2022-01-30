@@ -2,17 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const userRegisterSlice = createSlice({
   name: "userRegister",
-  initialState: { isLoading: false, error: null, successMessage: null },
+  initialState: {
+    isLoading: false,
+    error: null,
+    successMessage: null,
+  },
 
   reducers: {
     userRegisterRequest(state) {
       state.isLoading = true;
-      state.successMessage = null;
       state.error = null;
+      state.successMessage = null;
     },
 
     userRegisterSuccess(state, action) {
-      console.log("In success");
       state.isLoading = false;
       state.successMessage = action.payload;
       state.error = null;

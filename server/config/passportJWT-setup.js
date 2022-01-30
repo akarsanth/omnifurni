@@ -13,9 +13,8 @@ passport.use(
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     },
-    (jwtPayload, done) => {
-      console.log("inside passport");
-      return User.findOne({ where: { id: jwtPayload.id } })
+    async (jwtPayload, done) => {
+      return await User.findOne({ where: { id: jwtPayload.id } })
         .then((user) => {
           return done(null, user);
         })

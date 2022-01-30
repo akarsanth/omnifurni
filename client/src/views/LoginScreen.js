@@ -1,27 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // REACT ROUTER
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 
 ///////////////////////////////////
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import {
-  authUser,
-  fetchAuthUser,
-} from "../app/features/authUser/authUser-actions";
+import { authUser } from "../app/features/authUser/authUser-actions";
 
 //////////////////////////////////
 // FORMIK and YUP
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
+import { Formik, Form as FormikForm } from "formik";
+import {
+  INITIAL_LOGIN_FORM_STATE,
+  LOGIN_FORM_VALIDATION,
+} from "../components/FormsUI/YupFormik";
 
 ///////////////////////////////////
 // Component Import
-import FormContainer, { FormLink } from "../components/FormContainer";
+import FormContainer, { FormLink } from "../components/FormsUI/FormContainer";
+import FormFields from "../components/FormsUI/FormFieldsWrapper";
 import Textfield from "../components/FormsUI/Textfield/index";
 import Button from "../components/FormsUI/Button";
-import GoogleButton from "react-google-button";
 
 //////////////////////////////////
 // MUI imports
@@ -34,30 +34,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
-/////////////////////////////////
-// Styled Components
-import { styled } from "@mui/material/styles";
-
-const SignUpForm = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing(3),
-}));
-
-// FORM INITIAL STATE AND VALIDATION
-const INITIAL_LOGIN_FORM_STATE = {
-  email: "",
-  password: "",
-};
-
-const LOGIN_FORM_VALIDATION = Yup.object().shape({
-  email: Yup.string().required("Required Field").email("Invalid email address"),
-  password: Yup.string().required("Required Field"),
-});
-
 //////////////////////////////////////
 // MAIN Component
 const LoginScreen = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   // For handling password visibility
@@ -68,46 +49,29 @@ const LoginScreen = () => {
     });
   };
 
-  // login state values
-  const { isLoading, error, message } = useSelector((state) => state.authUser);
-
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
-  // for redirect
-  const redirectToGoogleSSO = async () => {
-    // variable to store our timer
-    let timer = null;
+  // login state handling with redux
+  const { isLoading, error, message, isAuthenticated } = useSelector(
+    (state) => state.authUser
+  );
 
-    const googleLoginURL = "http://localhost:5000/api/v1/auth/login/google";
-    const newWindow = window.open(
-      googleLoginURL,
-      "_blank",
-      "width=600, height=600"
-    );
-
-    // if there is new window
-    if (newWindow) {
-      // check every half second if window is closed
-      // if window is closed clear the interval
-      timer = setInterval(() => {
-        console.log("here");
-        if (newWindow.closed) {
-          console.log("Yay, we are authenticated");
-          // fetchAuthUser();
-          // dispatch(fetchAuthUser());
-
-          // release timer from the variable
-          if (timer) clearInterval(timer);
-        }
-      }, 500);
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (location.state?.from) {
+        navigate(location.state.from);
+      } else {
+        navigate("/");
+      }
     }
-  };
+  }, [isAuthenticated, navigate, location.state?.from]);
 
   // login submit handler
-  const submitHandler = (values) => {
+  const submitHandler = (values, { resetForm }) => {
     dispatch(authUser(values));
+    resetForm({ values: "" });
   };
 
   return (
@@ -117,7 +81,7 @@ const LoginScreen = () => {
         component="h2"
         sx={{ mb: 4, fontWeight: 700 }}
       >
-        Log In to Your Account!{" "}
+        Log In to Your Account!
       </Typography>
 
       <Formik
@@ -125,8 +89,8 @@ const LoginScreen = () => {
         validationSchema={LOGIN_FORM_VALIDATION}
         onSubmit={submitHandler}
       >
-        <Form>
-          <SignUpForm>
+        <FormikForm>
+          <FormFields>
             <Textfield label="Enter Email" name="email" required />
 
             <Textfield
@@ -174,11 +138,9 @@ const LoginScreen = () => {
 
             {message && <Alert severity="success">{message}</Alert>}
             {error && <Alert severity="error">{error}</Alert>}
-          </SignUpForm>
-        </Form>
+          </FormFields>
+        </FormikForm>
       </Formik>
-
-      <GoogleButton onClick={redirectToGoogleSSO} />
     </FormContainer>
   );
 };
