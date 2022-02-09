@@ -14,6 +14,9 @@ import categoryListReducer from "./features/category/categoryList-slice";
 // cart
 import cartReducer from "./features/cart/cart-slice";
 
+// Message (Notification)
+import messageReducer from "./features/message/message-slice";
+
 const store = configureStore({
   reducer: {
     // user login and register
@@ -29,6 +32,8 @@ const store = configureStore({
 
     // cart related
     cart: cartReducer,
+
+    message: messageReducer,
   },
 });
 

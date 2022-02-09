@@ -15,15 +15,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
 
+/////////////////////////////////////
+// Custom Components
+import CustomizedGrid from "../Grid/CustomizedGrid";
+
 //////////////////////////////////////
 // Styled Components
 import styled from "styled-components";
-
-const CustomizedGrid = styled(Grid)`
-  .MuiGrid-item {
-    padding-top: 0;
-  }
-`;
 
 const ProductImage = styled.img`
   max-width: 100%;
@@ -45,7 +43,7 @@ const ProductInfo = (props) => {
       columns={{ xs: 1, md: 2 }}
       sx={{ mb: 8, mt: 0 }}
     >
-      <Grid item xs={1} md={1} sx={{ pt: 0 }}>
+      <Grid item xs={1} md={1}>
         <Box
           sx={{
             border: 4,
@@ -55,7 +53,7 @@ const ProductInfo = (props) => {
           <ProductImage loading="lazy" src={imagePath} />
         </Box>
       </Grid>
-      <Grid item xs={1} md={1} sx={{ pt: 0 }}>
+      <Grid item xs={1} md={1}>
         <Box
           sx={{
             display: "flex",
@@ -91,7 +89,7 @@ const ProductInfo = (props) => {
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               <Rating
-                value={rating}
+                value={parseFloat(rating)}
                 precision={0.5}
                 max={5}
                 readOnly

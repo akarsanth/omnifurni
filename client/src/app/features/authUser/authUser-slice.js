@@ -37,6 +37,14 @@ const authUserSlice = createSlice({
       state.userInfo = action.payload.user;
       state.userInfo.isAdmin = action.payload.isAdmin;
     },
+
+    updateUserInfo(state, action) {
+      const { firstName, lastName, contactNumber } = action.payload;
+
+      state.userInfo.first_name = firstName;
+      state.userInfo.last_name = lastName;
+      state.userInfo.contact_number = contactNumber;
+    },
   },
 });
 
@@ -46,6 +54,7 @@ export const {
   userAuthFail,
   setIsAuthenticated,
   setUserInfo,
+  updateUserInfo,
 } = authUserSlice.actions;
 
 export default authUserSlice.reducer;

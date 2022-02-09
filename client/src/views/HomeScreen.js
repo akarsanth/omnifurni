@@ -88,6 +88,7 @@ const HomeView = () => {
                         width: "100%",
                         height: "100%",
                       }}
+                      key={product.product_id}
                     />
                   );
                 })}
@@ -137,6 +138,7 @@ const HomeView = () => {
                         width: "100%",
                         height: "100%",
                       }}
+                      key={category.category_id}
                     />
                   );
                 })}

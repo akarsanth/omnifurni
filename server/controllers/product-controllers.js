@@ -6,9 +6,9 @@ const Category = db.category;
 const Review = db.review;
 const User = db.user;
 
-// @desc   Fetch all products
-// @route  GET api/v1/products
-// @access Public (anything can hit it)
+// @desc    Fetch all products
+// @route   GET api/v1/products
+// @access  Public (anything can hit it)
 const findAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.findAll();

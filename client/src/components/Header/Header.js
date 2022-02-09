@@ -34,6 +34,7 @@ import logo from "../../assets/omnifurni.png";
 /////////////////////////////////
 // Styled Components
 import { styled } from "@mui/material/styles";
+import AdminMenu from "./AdminMenu";
 
 const BrandLogo = styled("img")`
   height: 55px;
@@ -63,17 +64,17 @@ const NavBar = styled(AppBar)({
 const Header = () => {
   const dispatch = useDispatch();
 
-  const { userInfo } = useSelector((state) => state.authUser);
+  const { isAuthenticated, userInfo } = useSelector((state) => state.authUser);
 
   const { totalQuantity } = useSelector((state) => state.cart);
 
   const { token } = useSelector((state) => state.token);
 
   useEffect(() => {
-    if (userInfo) {
+    if (isAuthenticated) {
       dispatch(fetchCartData(token));
     }
-  }, [userInfo, dispatch, token]);
+  }, [isAuthenticated, dispatch, token]);
 
   return (
     <Box>
@@ -133,9 +134,10 @@ const Header = () => {
                 </Badge>
               </IconButton>
 
-              {/* Materil UI Link (all styling) but works like RouterLink */}
+              {/* Material UI Link (all styling) but works like RouterLink */}
 
-              {userInfo ? <MyAccountMenu /> : <HeaderButtons />}
+              {isAuthenticated ? <MyAccountMenu /> : <HeaderButtons />}
+              {userInfo && userInfo.isAdmin && <AdminMenu />}
             </HeaderRight>
           </Toolbar>
         </Container>

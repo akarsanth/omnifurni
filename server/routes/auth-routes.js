@@ -10,7 +10,10 @@ import {
   forgotPassword,
   resetPassword,
   getUserInfo,
+  updateUserDetails,
+  updatePassword,
   getAllUsersInfo,
+  editUser,
 } from "../controllers/user-controllers.js";
 
 import auth from "../middlewares/auth.js";
@@ -40,6 +43,16 @@ router.post("/reset", auth, resetPassword);
 
 // get user info
 router.get("/info", auth, getUserInfo);
+
+// to update user details (by user itself)
+router.put("/userDetails", auth, updateUserDetails);
+
+// to update password
+router.put("/updatePassword", auth, updatePassword);
+
 router.get("/allUsersInfo", auth, authAdmin, getAllUsersInfo);
+
+// To edit user (By admin)
+router.put("/editUser", auth, authAdmin, editUser);
 
 export default router;

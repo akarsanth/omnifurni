@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink, useParams } from "react-router-dom";
+import axios from "axios";
 
 ////////////////////////////////////////
 // MUI Components
@@ -13,7 +14,6 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Link from "@mui/material/Link";
 import Alert from "@mui/material/Alert";
-import axios from "axios";
 
 // create review reducer
 const initialState = {
@@ -55,7 +55,7 @@ const labels = {
 ////////////////////////////////////////
 // MAIN COMPONENT
 const ProductReviews = (props) => {
-  const { reviews } = props;
+  const { reviews, reviewUpdated } = props;
 
   // To access id from param
   const params = useParams();
@@ -110,9 +110,11 @@ const ProductReviews = (props) => {
         },
       };
 
-      await axios.post(`/api/products/${params.id}/reviews`, review, config);
+      await axios.post(`/api/v1/products/${params.id}/reviews`, review, config);
 
       dispatch({ type: "CREATE_REVIEW_SUCCESS" });
+
+      reviewUpdated();
     } catch (error) {
       dispatch({
         type: "CREATE_REVIEW_FAIL",
@@ -138,7 +140,10 @@ const ProductReviews = (props) => {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3.5 }}>
             {reviews.map((review) => {
               return (
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                  key={review.review_id}
+                >
                   <Box sx={{ display: "flex", gap: 1 }}>
                     <Avatar
                       sx={{ width: 40, height: 40, fontSize: 15 }}
@@ -146,7 +151,7 @@ const ProductReviews = (props) => {
                     <Box>
                       <Typography variant="body1">{`${review.user.first_name} ${review.user.last_name}`}</Typography>
                       <Rating
-                        value={review.rating}
+                        value={parseFloat(review.rating)}
                         size="small"
                         precision={0.5}
                         readOnly

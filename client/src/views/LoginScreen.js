@@ -22,6 +22,7 @@ import FormContainer, { FormLink } from "../components/FormsUI/FormContainer";
 import FormFields from "../components/FormsUI/FormFieldsWrapper";
 import Textfield from "../components/FormsUI/Textfield/index";
 import Button from "../components/FormsUI/Button";
+import Message from "../components/Message";
 
 //////////////////////////////////
 // MUI imports
@@ -71,77 +72,96 @@ const LoginScreen = () => {
   // login submit handler
   const submitHandler = (values, { resetForm }) => {
     dispatch(authUser(values));
-    resetForm({ values: "" });
+    // resetForm({ values: "" });
   };
 
   return (
-    <FormContainer>
-      <Typography
-        variant="body1"
-        component="h2"
-        sx={{ mb: 4, fontWeight: 700 }}
-      >
-        Log In to Your Account!
-      </Typography>
+    <>
+      {!isAuthenticated && (
+        <FormContainer>
+          <Typography
+            variant="body1"
+            component="h2"
+            sx={{ mb: 4, fontWeight: 700 }}
+          >
+            Log In to Your Account!
+          </Typography>
 
-      <Formik
-        initialValues={{ ...INITIAL_LOGIN_FORM_STATE }}
-        validationSchema={LOGIN_FORM_VALIDATION}
-        onSubmit={submitHandler}
-      >
-        <FormikForm>
-          <FormFields>
-            <Textfield label="Enter Email" name="email" required />
+          <Formik
+            initialValues={{ ...INITIAL_LOGIN_FORM_STATE }}
+            validationSchema={LOGIN_FORM_VALIDATION}
+            onSubmit={submitHandler}
+          >
+            <FormikForm>
+              <FormFields>
+                <Textfield label="Enter Email" name="email" required />
 
-            <Textfield
-              label="Enter Password"
-              name="password"
-              required
-              type={values.showPassword ? "text" : "password"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+                <Textfield
+                  label="Enter Password"
+                  name="password"
+                  required
+                  type={values.showPassword ? "text" : "password"}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {values.showPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
 
-            <Box>
-              <FormLink to="/forgot" component={RouterLink} underline="none">
-                <Typography variant="body2">Forgot your password?</Typography>
-              </FormLink>
-            </Box>
+                <Box>
+                  <FormLink
+                    to="/forgot"
+                    component={RouterLink}
+                    underline="none"
+                  >
+                    <Typography variant="body2">
+                      Forgot your password?
+                    </Typography>
+                  </FormLink>
+                </Box>
 
-            <Button
-              color="secondary"
-              endIcon={<KeyboardArrowRightIcon />}
-              disableElevation
-              loading={isLoading}
-            >
-              Login
-            </Button>
+                <Button
+                  color="secondary"
+                  endIcon={<KeyboardArrowRightIcon />}
+                  disableElevation
+                  loading={isLoading}
+                >
+                  Login
+                </Button>
 
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Typography variant="body2">Create new account?</Typography>
-              <FormLink to="/register" component={RouterLink} underline="none">
-                <Typography variant="body2">Sign up!</Typography>
-              </FormLink>
-            </Box>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <Typography variant="body2">Create new account?</Typography>
+                  <FormLink
+                    to="/register"
+                    component={RouterLink}
+                    underline="none"
+                  >
+                    <Typography variant="body2">Sign up!</Typography>
+                  </FormLink>
+                </Box>
 
-            {message && <Alert severity="success">{message}</Alert>}
-            {error && <Alert severity="error">{error}</Alert>}
-          </FormFields>
-        </FormikForm>
-      </Formik>
-    </FormContainer>
+                {/* {message && <Alert severity="success">{message}</Alert>} */}
+                {message && <Message message={message} severity="success" />}
+                {error && <Alert severity="error">{error}</Alert>}
+              </FormFields>
+            </FormikForm>
+          </Formik>
+        </FormContainer>
+      )}
+    </>
   );
 };
 

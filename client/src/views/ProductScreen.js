@@ -49,6 +49,7 @@ const ProductScreen = () => {
   const { isLoading, product, error } = state;
   const { category, reviews, ...productDetails } = product;
 
+  const [changed, setChanged] = useState(false);
   useEffect(() => {
     const getProductDetails = async () => {
       try {
@@ -72,7 +73,11 @@ const ProductScreen = () => {
     };
 
     getProductDetails();
-  }, [params.id]);
+  }, [params.id, changed]);
+
+  const reviewUpdated = () => {
+    setChanged(true);
+  };
 
   return (
     <Container sx={{ pt: 5, pb: 10 }}>
@@ -109,7 +114,11 @@ const ProductScreen = () => {
         />
 
         {/* Product Description and Reviews */}
-        <ProductAccordion description={product.description} reviews={reviews} />
+        <ProductAccordion
+          description={product.description}
+          reviews={reviews}
+          reviewUpdated={reviewUpdated}
+        />
       </Box>
     </Container>
   );

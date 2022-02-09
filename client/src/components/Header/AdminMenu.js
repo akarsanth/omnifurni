@@ -2,12 +2,6 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
 
-/////////////////////////////////////////
-// Redux
-import { logout } from "../../app/features/authUser/authUser-actions";
-
-////////////////////////////////////////
-// MUI Components
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -18,7 +12,7 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import Logout from "@mui/icons-material/Logout";
 import Link from "@mui/material/Link";
 
-const MyAccountMenu = () => {
+const AdminMenu = () => {
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -28,11 +22,6 @@ const MyAccountMenu = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  // logout handler
-  const logoutHandler = (e) => {
-    dispatch(logout());
   };
 
   return (
@@ -45,7 +34,7 @@ const MyAccountMenu = () => {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
       >
-        My Account
+        Admin
       </Button>
       <Menu
         id="fade-menu"
@@ -59,28 +48,66 @@ const MyAccountMenu = () => {
       >
         <MenuItem onClick={handleClose}>
           <Link
-            to="/account/dashboard"
+            to="/admin/dashboard"
             component={RouterLink}
             underline="none"
             sx={{ display: "flex", alignItems: "center" }}
             color="grey.900"
           >
-            <ListItemIcon>
-              <AccountCircleOutlinedIcon fontSize="small" />
-            </ListItemIcon>
-            Profile
+            Dashboard
           </Link>
         </MenuItem>
-        {/* <Divider /> */}
-        <MenuItem onClick={logoutHandler}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
+
+        <MenuItem onClick={handleClose}>
+          <Link
+            to="/admin/productlist"
+            component={RouterLink}
+            underline="none"
+            sx={{ display: "flex", alignItems: "center" }}
+            color="grey.900"
+          >
+            Product
+          </Link>
+        </MenuItem>
+
+        <MenuItem onClick={handleClose}>
+          <Link
+            to="/admin/categorylist"
+            component={RouterLink}
+            underline="none"
+            sx={{ display: "flex", alignItems: "center" }}
+            color="grey.900"
+          >
+            Category
+          </Link>
+        </MenuItem>
+
+        <MenuItem onClick={handleClose}>
+          <Link
+            to="/admin/orderlist"
+            component={RouterLink}
+            underline="none"
+            sx={{ display: "flex", alignItems: "center" }}
+            color="grey.900"
+          >
+            Order
+          </Link>
+        </MenuItem>
+
+        <MenuItem onClick={handleClose}>
+          <Link
+            to="/admin/userlist"
+            component={RouterLink}
+            underline="none"
+            sx={{ display: "flex", alignItems: "center" }}
+            color="grey.900"
+          >
+            User
+          </Link>
         </MenuItem>
       </Menu>
     </div>
   );
 };
 
-export default MyAccountMenu;
+export default AdminMenu;

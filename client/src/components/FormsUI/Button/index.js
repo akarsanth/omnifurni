@@ -16,7 +16,7 @@ const ButtonWrapper = ({ children, ...otherProps }) => {
     onClick: submitHandler,
     ...otherProps,
     variant: "contained",
-    fullWidth: true,
+    fullWidth: false,
   };
   return <LoadingButton {...configButton}>{children}</LoadingButton>;
 };

@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Link as RouterLink } from "react-router-dom";
+import React from "react";
 
 ////////////////////////////////////////
 // MUI Components
@@ -30,7 +28,7 @@ const AccordionHeader = styled(Typography)(({ theme }) => ({
 }));
 
 const ProductAccordion = (props) => {
-  const { description, reviews } = props;
+  const { description, reviews, reviewUpdated } = props;
 
   return (
     <Box>
@@ -59,7 +57,7 @@ const ProductAccordion = (props) => {
         </AccordionSummary>
         <AccordionDetails sx={{ borderTop: 1, borderColor: "grey.100" }}>
           {/* Reviews Component */}
-          <ProductReviews reviews={reviews} />
+          <ProductReviews reviews={reviews} reviewUpdated={reviewUpdated} />
         </AccordionDetails>
       </Accordion>
     </Box>

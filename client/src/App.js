@@ -5,19 +5,20 @@ import { useSelector, useDispatch } from "react-redux";
 
 import ProtectedRoutes from "./ProtectedRoutes";
 
-////////////////////////////
+/////////////////////////////////////////
 // Redux
 import { getToken } from "./app/features/token/token-actions";
 import { fetchAuthUser } from "./app/features/authUser/authUser-actions";
 
-///////////////////////////
+////////////////////////////////////////
 // MUI imports
 import Box from "@mui/material/Box";
 
 // Styles
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-// Custom Components
+///////////////////////////////////////////
+// CUSTOM COMPONENTS
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer.js";
 import HomeScreen from "./views/HomeScreen";
@@ -25,12 +26,34 @@ import CartScreen from "./views/CartScreen";
 import LoginScreen from "./views/LoginScreen";
 import RegisterScreen from "./views/RegisterScreen";
 import ActivationEmail from "./views/ActivationEmail";
-import AccountScreen from "./views/AccountScreen";
 import ForgotPassword from "./views/ForgotPassword";
 import ResetPassword from "./views/ResetPassword";
 import ProductScreen from "./views/ProductScreen";
 import CategoryScreen from "./views/CategoryScreen";
+
+// Account Screen
+import AccountScreen from "./views/AccountScreen";
+import AccountDashboard from "./components/Account/Dashboard";
+import Orders from "./components/Account/Orders";
+import Address from "./components/Account/Address/index";
+import AccountDetails from "./components/Account/AccountDetails/index.js";
+
+// Admin Screen
+import AdminScreen from "./views/AdminScreen";
+import AdminDashboard from "./components/AdminScreen/Dashboard";
+import CategoryList from "./components/AdminScreen/CategoryList";
+import UserList from "./components/AdminScreen/UserList";
+import ProductList from "./components/AdminScreen/ProductList";
+import OrderList from "./components/AdminScreen/OrderList";
+
+/////////////////////////////////////////
+// MUI
 import { CssBaseline } from "@mui/material";
+import BasicTable from "./tables/BasicTable";
+
+//////////////////////////////////////////
+// Component Import
+import Message from "./components/Message";
 
 const theme = createTheme({
   palette: {
@@ -51,7 +74,7 @@ const theme = createTheme({
     fontWeightBold: 700,
 
     allVariants: {
-      color: "#555",
+      color: "#444",
     },
   },
 
@@ -66,12 +89,19 @@ function App() {
 
   const { isAuthenticated } = useSelector((state) => state.authUser);
 
+  const { success, error } = useSelector((state) => state.message);
+
   // when isAuthenticated is changed
   // i.e. login status is changed
   useEffect(() => {
+    // When the app loads if there is no firstLogin
+    // It is not possible to get the access token
+    // And without access token it is not possible to get user info
+
     const firstLogin = localStorage.getItem("firstLogin");
 
     if (firstLogin) {
+      // To get Access token
       dispatch(getToken());
     }
   }, [isAuthenticated, dispatch]);
@@ -117,11 +147,30 @@ function App() {
               {/* PROTECTED ROUTES */}
               <Route element={<ProtectedRoutes />}>
                 <Route path="/cart" element={<CartScreen />} />
-                <Route path="/account" element={<AccountScreen />} />
+
+                {/* Account Screen */}
+                <Route path="/account" element={<AccountScreen />}>
+                  <Route path="dashboard" element={<AccountDashboard />} />
+                  <Route path="address" element={<Address />} />
+                  <Route path="orders" element={<Orders />} />
+                  <Route path="details" element={<AccountDetails />} />
+                </Route>
+
+                {/* Admin Screen */}
+                <Route path="/admin" element={<AdminScreen />}>
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="productlist" element={<ProductList />} />
+                  <Route path="categorylist" element={<CategoryList />} />
+                  <Route path="orderlist" element={<OrderList />} />
+                  <Route path="userlist" element={<UserList />} />
+                </Route>
               </Route>
             </Routes>
             {/* </Container> */}
             <Footer />
+
+            {/* Global message component */}
+            {success && <Message message={success} />}
           </Box>
         </Router>
       </CssBaseline>
