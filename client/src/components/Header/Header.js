@@ -3,9 +3,10 @@ import React, { useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 //////////////////////////////////
-// Redux
+// Redux Related
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCartData } from "../../app/features/cart/cart-actions";
+import { getCategoryList } from "../../app/features/category/category-actions";
 
 /////////////////////////////////
 // Components
@@ -70,11 +71,17 @@ const Header = () => {
 
   const { token } = useSelector((state) => state.token);
 
+  // To fetch cart
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchCartData(token));
     }
   }, [isAuthenticated, dispatch, token]);
+
+  // To fetch category list
+  useEffect(() => {
+    dispatch(getCategoryList());
+  }, [dispatch]);
 
   return (
     <Box>

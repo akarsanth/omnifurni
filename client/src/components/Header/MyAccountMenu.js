@@ -57,13 +57,19 @@ const MyAccountMenu = () => {
         onClose={handleClose}
         TransitionComponent={Fade}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleClose} sx={{ p: 0 }}>
           <Link
             to="/account/dashboard"
             component={RouterLink}
             underline="none"
-            sx={{ display: "flex", alignItems: "center" }}
             color="grey.900"
+            sx={{
+              display: "flex",
+              width: "100%",
+              pl: 2,
+              pr: 2,
+              py: 1,
+            }}
           >
             <ListItemIcon>
               <AccountCircleOutlinedIcon fontSize="small" />

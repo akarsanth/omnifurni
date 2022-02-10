@@ -1,5 +1,4 @@
 import React, { useReducer } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 //////////////////////////////////
@@ -10,6 +9,7 @@ import { USER_DETAILS_VALIDATION } from "../FormsUI/YupFormik";
 /////////////////////////////////
 // Redux
 import { updateSuccessMessage } from "../../app/features/message/message-slice";
+import { useDispatch, useSelector } from "react-redux";
 
 ////////////////////////////////
 // MUI Components
@@ -133,7 +133,7 @@ const UserEditModal = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography variant="body1" sx={{ mb: 2, fontWeight: 700 }}>
+          <Typography variant="body1" sx={{ mb: 3, fontWeight: 700 }}>
             User Details
           </Typography>
 
@@ -156,6 +156,7 @@ const UserEditModal = (props) => {
                   label="Is Admin?"
                   defaultChecked={rowData.role === 0 ? false : true}
                   name="role"
+                  sx={{}}
                 />
 
                 <Button

@@ -26,10 +26,29 @@ export const categoryListSlice = createSlice({
       state.categories = [];
       state.error = action.payload;
     },
+
+    updateCategoryList(state, action) {
+      state.categories = action.payload;
+    },
+
+    categoryDeleted(state, action) {
+      const categoryId = action.payload;
+
+      const updatedList = state.categories.filter(
+        (category) => category.category_id !== categoryId && category
+      );
+
+      state.categories = [...updatedList];
+    },
   },
 });
 
-export const { categoryListRequest, categoryListSuccess, categoryListFail } =
-  categoryListSlice.actions;
+export const {
+  categoryListRequest,
+  categoryListSuccess,
+  categoryListFail,
+  updateCategoryList,
+  categoryDeleted,
+} = categoryListSlice.actions;
 
 export default categoryListSlice.reducer;

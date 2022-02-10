@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 
 ///////////////////////////////
-// REDUX related
-import { getProductList } from "../app/features/products/product-actions";
-import { getCategoryList } from "../app/features/category/category-actions";
+// Redux Related
+import { useSelector, useDispatch } from "react-redux";
+import { getFeaturedProductList } from "../app/features/featuredProducts/product-actions";
 
 ///////////////////////////////
 // MUI Components
@@ -20,17 +19,13 @@ import Container from "@mui/material/Container";
 import ProductCard from "../components/ProductCard";
 import CategoryCard from "../components/CategoryCard";
 
-///////////////////////////////////
-// Styled Components
-// import { styled } from "@mui/material/styles";
-
 const HomeView = () => {
   const dispatch = useDispatch();
 
   // to access productList(present in reduxStore) from the global state
   // it can be accessed in this home screen
   // as Provider component wraps the entire app component
-  const productList = useSelector((state) => state.productList);
+  const productList = useSelector((state) => state.featuredProductList);
   // destructuring productList
   const { isLoading, error, products } = productList;
 
@@ -42,8 +37,7 @@ const HomeView = () => {
   } = categoryList;
 
   useEffect(() => {
-    dispatch(getProductList());
-    dispatch(getCategoryList());
+    dispatch(getFeaturedProductList());
   }, [dispatch]);
 
   return (
@@ -51,7 +45,7 @@ const HomeView = () => {
       <Box sx={{ pt: 8, pb: 10 }}>
         <Box sx={{ mb: 8 }}>
           <Divider textAlign="center" sx={{ mb: 3 }}>
-            <Typography variant="h6">Poducts</Typography>
+            <Typography variant="h6">Featured Poducts</Typography>
             <Fade
               in={isLoading}
               style={{

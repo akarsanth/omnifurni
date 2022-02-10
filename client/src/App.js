@@ -142,7 +142,7 @@ function App() {
                 exact
               />
               <Route path="/product/:id" element={<ProductScreen />} />
-              <Route path="/category/:id" element={<CategoryScreen />} />
+              <Route path="/category/:id" element={<CategoryScreen />} exact />
 
               {/* PROTECTED ROUTES */}
               <Route element={<ProtectedRoutes />}>

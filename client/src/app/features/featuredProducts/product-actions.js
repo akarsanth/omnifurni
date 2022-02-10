@@ -7,12 +7,12 @@ import {
   productListFail,
 } from "./productList-slice";
 
-export const getProductList = () => {
+export const getFeaturedProductList = () => {
   return async (dispatch) => {
     try {
       dispatch(productListRequest());
 
-      const { data } = await axios.get("/api/v1/products");
+      const { data } = await axios.get("/api/v1/products/featured");
 
       dispatch(productListSuccess(data));
     } catch (error) {

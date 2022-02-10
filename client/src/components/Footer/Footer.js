@@ -85,7 +85,7 @@ const Footer = () => {
             //   gap: 6,
             // }}
             spacing={{ xs: 2, sm: 5, md: 3 }}
-            columns={{ xs: 1, sm: 2, md: 4 }}
+            columns={{ xs: 1, sm: 2, md: 3 }}
           >
             <Grid item xs={1} sm={1} md={1}>
               <Link
@@ -145,18 +145,7 @@ const Footer = () => {
                 </FooterLink>
               </FooterLinks>
             </Grid>
-            <Grid item xs={1} sm={1} md={1}>
-              <FooterHeading>Categories</FooterHeading>
 
-              <FooterLinks>
-                <FooterLink component={RouterLink} to="/">
-                  Category 1
-                </FooterLink>
-                <FooterLink component={RouterLink} to="/">
-                  Category
-                </FooterLink>
-              </FooterLinks>
-            </Grid>
             <Grid item xs={1} sm={1} md={1}>
               <FooterHeading>Customer Service</FooterHeading>
 

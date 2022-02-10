@@ -6,7 +6,7 @@ import authUserReducer from "./features/authUser/authUser-slice";
 import tokenReducer from "./features/token/token-slice";
 
 // product related
-import productListReducer from "./features/products/productList-slice";
+import productListReducer from "./features/featuredProducts/productList-slice";
 
 // category related
 import categoryListReducer from "./features/category/categoryList-slice";
@@ -25,7 +25,7 @@ const store = configureStore({
     token: tokenReducer,
 
     // product related
-    productList: productListReducer,
+    featuredProductList: productListReducer,
 
     // category related
     categoryList: categoryListReducer,

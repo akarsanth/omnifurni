@@ -9,9 +9,9 @@ const User = db.user;
 // @desc    Fetch all products
 // @route   GET api/v1/products
 // @access  Public (anything can hit it)
-const findAllProducts = asyncHandler(async (req, res) => {
+const findAllFeaturedProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.findAll();
+    const products = await Product.findAll({ where: { featured: 1 } });
     res.json(products);
   } catch (error) {
     res.status(500);
@@ -197,7 +197,7 @@ const createProductReview = asyncHandler(async (req, res) => {
 });
 
 export {
-  findAllProducts,
+  findAllFeaturedProducts,
   findProductById,
   deleteProduct,
   createProduct,

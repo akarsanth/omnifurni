@@ -47,6 +47,11 @@ export default (sequelize, Sequelize) => {
         allowNull: false,
         defaultValue: 0,
       },
+
+      featured: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
     },
 
     {

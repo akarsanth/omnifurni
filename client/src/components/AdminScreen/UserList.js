@@ -2,7 +2,7 @@ import React, { useState, useEffect, useReducer } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-/////////////////////////////////
+///////////////////////////////////////
 // TABLE
 import MaterialTable from "@material-table/core";
 import tableIcons from "../../tables/IconsProvider";
@@ -11,6 +11,9 @@ import tableIcons from "../../tables/IconsProvider";
 // ICONS
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+
+/////////////////////////////////////////
+// Component Import
 import UserEditModal from "./UserEditModal";
 
 const initialState = {
@@ -127,21 +130,22 @@ const UserList = () => {
   }, [token]);
 
   // User Edit Modal
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   // Selected (Clicked) Row
   const [rowData, setRowData] = useState({});
+  // Edit Action Button Handler
   const handleUserEdit = (rowData) => {
     setRowData(rowData);
-
     handleOpen();
   };
 
   // Update List State
+  // Called from UserEditModal after
+  // Successful Edit
   const updateList = (updatedUser) => {
-    console.log("Updated user", updatedUser);
     const users = userList.map((user) =>
       user.user_id !== updatedUser.user_id ? user : updatedUser
     );
