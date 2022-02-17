@@ -30,6 +30,10 @@ import ForgotPassword from "./views/ForgotPassword";
 import ResetPassword from "./views/ResetPassword";
 import ProductScreen from "./views/ProductScreen";
 import CategoryScreen from "./views/CategoryScreen";
+import ContactUsScreen from "./views/ContactUsScreen";
+import AboutScreen from "./views/InfoScreens/AboutScreen";
+import FAQScreen from "./views/InfoScreens/FAQScreen";
+import PrivacyScreen from "./views/InfoScreens/PrivacyPolicyScreen";
 
 // Account Screen
 import AccountScreen from "./views/AccountScreen";
@@ -49,7 +53,6 @@ import OrderList from "./components/AdminScreen/OrderList";
 /////////////////////////////////////////
 // MUI
 import { CssBaseline } from "@mui/material";
-import BasicTable from "./tables/BasicTable";
 
 //////////////////////////////////////////
 // Component Import
@@ -144,6 +147,14 @@ function App() {
               <Route path="/product/:id" element={<ProductScreen />} />
               <Route path="/category/:id" element={<CategoryScreen />} exact />
 
+              {/* Website Information Screen */}
+              <Route path="/about" element={<AboutScreen />} />
+              <Route path="/faq" element={<FAQScreen />} />
+              <Route path="/privacy" element={<PrivacyScreen />} />
+
+              {/* Contact Us Screen */}
+              <Route path="/contact" element={<ContactUsScreen />} />
+
               {/* PROTECTED ROUTES */}
               <Route element={<ProtectedRoutes />}>
                 <Route path="/cart" element={<CartScreen />} />
@@ -171,6 +182,7 @@ function App() {
 
             {/* Global message component */}
             {success && <Message message={success} />}
+            {error && <Message message={error} severity="error" />}
           </Box>
         </Router>
       </CssBaseline>

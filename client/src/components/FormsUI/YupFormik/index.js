@@ -108,9 +108,69 @@ export const PASSWORD_CHANGE_FORM_VALIDATION = Yup.object().shape({
 });
 
 /////////////////////////////////////////
+// MY ACCOUNT SCREEN
+export const ADDRESS_ADD_EDIT_VALIDATION = Yup.object().shape({
+  city: Yup.string().required("City is a required Field"),
+  postalCode: Yup.string()
+    .required("Zip / Postal Code is a required field")
+    .matches(/^[0-9]+$/, "Must be only digits")
+    .min(5, "Must be exactly 5 digits")
+    .max(5, "Must be exactly 5 digits"),
+
+  streetAddress: Yup.string().required("Street Address is a required Field"),
+  province: Yup.string().required("Province is a required Field"),
+});
+
+/////////////////////////////////////////
 // Admin Screen
 // USER DETAILS VALIDATION
 export const USER_DETAILS_VALIDATION = Yup.object().shape({
   firstName: Yup.string().required("First name is a required Field"),
   lastName: Yup.string().required("Last Name is a required Field"),
+});
+
+// Category Add/Edit Form validation
+export const CATEGORY_ADD_EDIT_VALIDATION = Yup.object().shape({
+  name: Yup.string().required("Category name is a required Field"),
+  description: Yup.string().required(
+    "Category description is a required Field"
+  ),
+});
+
+// Product Add/Edit Form Validation
+export const PRODUCT_ADD_EDIT_VALIDATION = Yup.object().shape({
+  name: Yup.string().required("Product name is a required Field"),
+  description: Yup.string().required("Product description is a required Field"),
+  price: Yup.number()
+    .required("Price is a required Field")
+    .typeError("Invalid entry")
+    .positive(),
+  countInStock: Yup.number()
+    .required("Count In Stock is a required Field")
+    .typeError("Invalid entry")
+    .positive()
+    .integer(),
+  category: Yup.string().required("Category is a required Field"),
+});
+
+/////////////////////////////////////////
+// Contact Us from
+export const INITIAL_CONTACT_FORM_STATE = {
+  name: "",
+  email: "",
+  contactNumber: "",
+  message: "",
+};
+
+export const CONTACT_FORM_VALIDATION = Yup.object().shape({
+  name: Yup.string().required("Name is a required Field"),
+  email: Yup.string()
+    .required("Email is a required Field")
+    .email("Invalid email address"),
+  contactNumber: Yup.string()
+    .required("Contact Number is a required field")
+    .matches(/^[0-9]+$/, "Must be only digits")
+    .min(10, "Must be exactly 10 digits")
+    .max(10, "Must be exactly 10 digits"),
+  message: Yup.string().required("Message is a required Field"),
 });

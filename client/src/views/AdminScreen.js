@@ -165,6 +165,7 @@ const AdminScreen = () => {
             border: 2,
             borderColor: "#eee",
             p: 2,
+            pb: 6,
             height: "100%",
             mb: 8,
           }}

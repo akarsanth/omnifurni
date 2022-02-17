@@ -24,7 +24,7 @@ export const registerUser = (registrationDetails) => {
 
       // data from response (res from backend)
       const { data } = await axios.post(
-        "/api/v1/auth/register",
+        "/api/v1/user/register",
         { firstName, lastName, contactNumber, email, password },
         config
       );

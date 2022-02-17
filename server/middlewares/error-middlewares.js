@@ -13,6 +13,7 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode);
 
   console.log("In error handler middleware");
+  console.log(err);
 
   // this will be set in data property (of error.response)
   res.json({

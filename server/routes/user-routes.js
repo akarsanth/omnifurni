@@ -13,7 +13,9 @@ import {
   updateUserDetails,
   updatePassword,
   getAllUsersInfo,
-  editUser,
+  updateUser,
+  addAddress,
+  editAddress,
 } from "../controllers/user-controllers.js";
 
 import auth from "../middlewares/auth.js";
@@ -45,14 +47,21 @@ router.post("/reset", auth, resetPassword);
 router.get("/info", auth, getUserInfo);
 
 // to update user details (by user itself)
-router.put("/userDetails", auth, updateUserDetails);
+router.put("/info", auth, updateUserDetails);
+
+// Address Add / Edit
+router.post("/address", auth, addAddress);
+router.put("/address/:id", auth, editAddress);
 
 // to update password
 router.put("/updatePassword", auth, updatePassword);
 
+/////////////////////////////////////////
+// Admin
+// To get all users list
 router.get("/allUsersInfo", auth, authAdmin, getAllUsersInfo);
 
 // To edit user (By admin)
-router.put("/editUser", auth, authAdmin, editUser);
+router.put("/:id", auth, authAdmin, updateUser);
 
 export default router;

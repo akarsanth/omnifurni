@@ -18,6 +18,9 @@ const findAllCategories = asyncHandler(async (req, res) => {
 // @access  Protected
 const findCategoryById = asyncHandler(async (req, res) => {});
 
+///////////////////////////////////////////
+// Admin
+
 // @desc    To delete category by id
 // @route   DELETE /api/v1/categories/:id
 // @access  Protected
@@ -48,4 +51,62 @@ const deleteCategory = asyncHandler(async (req, res) => {
   }
 });
 
-export { findAllCategories, findCategoryById, deleteCategory };
+// @desc    To create new category
+// @route   POST /api/v1/categories
+// @access  Protected
+const createCategory = asyncHandler(async (req, res) => {
+  try {
+    const { name, description, imagePath } = req.body;
+
+    const category = {
+      name,
+      description,
+      imagePath,
+    };
+
+    const createdCategory = await Category.create(category);
+
+    res.status(201).json({
+      message: "Category created Successfully",
+      createdCategory,
+    });
+  } catch (err) {
+    res.status(500);
+    throw new Error("Category could not be created at this moment. Try Again!");
+  }
+});
+
+// @desc    To update category by id
+// @route   PUT /api/v1/categories/:id
+// @access  Protected
+const updateCategory = asyncHandler(async (req, res) => {
+  try {
+    const { name, description, imagePath } = req.body;
+
+    const category = await Category.findByPk(req.params.id);
+
+    if (category) {
+      category.name = name || category.name;
+      category.description = description || category.description;
+      category.imagePath = imagePath || category.imagePath;
+    }
+
+    const updatedCategory = await category.save();
+
+    res.json({
+      message: "Category updated successfully",
+      updatedCategory,
+    });
+  } catch (err) {
+    res.status(500);
+    throw new Error("Category could not be updated at this moment. Try Again!");
+  }
+});
+
+export {
+  findAllCategories,
+  findCategoryById,
+  deleteCategory,
+  createCategory,
+  updateCategory,
+};

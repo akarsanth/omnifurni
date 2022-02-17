@@ -1,10 +1,14 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 ///////////////////////////////
 // Redux Related
 import { updateSuccessMessage } from "../../app/features/message/message-slice";
-import { categoryDeleted } from "../../app/features/category/categoryList-slice";
+import {
+  categoryAdded,
+  categoryDeleted,
+  categoryEdited,
+} from "../../app/features/category/categoryList-slice";
 import { useDispatch, useSelector } from "react-redux";
 
 //////////////////////////////////////
@@ -12,9 +16,21 @@ import { useDispatch, useSelector } from "react-redux";
 import MaterialTable from "@material-table/core";
 import tableIcons from "../../tables/IconsProvider";
 
+/////////////////////////////////////////
+// MUI COMPONENTS
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import AddIcon from "@mui/icons-material/Add";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+
 ///////////////////////////////////////
 import CategoryAddEditModal from "./CategotyAddEditModal";
-import { Alert } from "@mui/material";
+
+//////////////////////////////////////
+// MUI Components
+import Alert from "@mui/material/Alert";
 
 ///////////////////////////////////////
 // Table Columns
@@ -38,33 +54,6 @@ const columns = [
   },
 ];
 
-/////////////////////////////////////////////
-// Category Delete Reducer
-const initialState = {
-  isLoading: false,
-  success: false,
-  error: null,
-};
-
-const categoryDeleteReducer = (state, action) => {
-  switch (action.type) {
-    case "CATEGORY_DELETE_REQUEST":
-      return { ...state, isLoading: true };
-
-    case "CATEGORY_DELETE_SUCCESS":
-      return { ...state, isLoading: false, success: action.payload };
-
-    case "CATEGORY_DELETE_FAIL":
-      return { ...state, isLoading: false, error: action.payload };
-
-    case "RESET_STATE":
-      return initialState;
-
-    default:
-      return state;
-  }
-};
-
 ////////////////////////////////////////////
 // MAIN COMPONENT
 const CategoryList = () => {
@@ -72,58 +61,104 @@ const CategoryList = () => {
 
   // Category List Global Reducer
   const { categories } = useSelector((state) => state.categoryList);
-
-  // For Category Delete
-  const [state, dispatch] = useReducer(categoryDeleteReducer, initialState);
-  const { isLoading, success, error } = state;
+  // As Material Table is not working
+  // as expected with Redux
+  const [categoryList, setCategoryList] = useState([]);
+  useEffect(() => {
+    setCategoryList(categories);
+  }, [categories]);
 
   // Category Add / Edit Modal
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleUserEdit = (rowData) => {
-    // setRowData(rowData);
+  // Selected (Clicked) Row
+  const [rowData, setRowData] = useState({});
+  const [actionType, setActionType] = useState("");
+  const handleCategoryEdit = (rowData) => {
+    setRowData(rowData);
+    setActionType("Edit");
+    handleOpen();
+  };
+
+  const handleCategoryAdd = () => {
+    setActionType("Add");
+    setRowData({});
     handleOpen();
   };
 
   // Handle Delete
+  const [error, setError] = useState("");
   const { token } = useSelector((state) => state.token);
+  const [deleteState, setDeleteState] = useState({
+    continueDeleting: false,
+    deletingCategory: "",
+  });
+
+  // Dialog Modal
+  const [openDialog, setOpenDialog] = React.useState(false);
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = (action) => {
+    if (action === "yes") {
+      setDeleteState((prev) => ({ ...prev, continueDeleting: true }));
+    }
+    setOpenDialog(false);
+  };
+
   const handleDelete = async (categoryId) => {
-    console.log(categoryId);
+    setDeleteState({
+      continueDeleting: false,
+      deletingCategory: categoryId,
+    });
 
-    try {
-      dispatch({ type: "RESET_STATE" });
+    handleOpenDialog();
+  };
 
-      dispatch({ type: "CATEGORY_DELETE_REQUEST" });
+  useEffect(() => {
+    const deleteCategory = async (categoryId) => {
+      try {
+        setError("");
 
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      };
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const { data } = await axios.delete(
+          `/api/v1/categories/${categoryId}`,
+          config
+        );
 
-      const { data } = await axios.delete(
-        `/api/v1/categories/${categoryId}`,
-        config
-      );
-      dispatch({ type: "CATEGORY_DELETE_SUCCESS", payload: data });
-
-      // To display message
-      dispatchRedux(updateSuccessMessage(data.message));
-
-      // To remove the deleted category from state
-      dispatchRedux(categoryDeleted(categoryId));
-    } catch (error) {
-      dispatch({
-        type: "CATEGORY_DELETE_FAIL",
-        payload:
+        // To display message
+        dispatchRedux(updateSuccessMessage(data.message));
+        // To remove the deleted category from state
+        dispatchRedux(categoryDeleted(categoryId));
+      } catch (error) {
+        setError(
           error.response && error.response.data.message
             ? error.response.data.message
-            : error.message,
-      });
+            : error.message
+        );
+      }
+    };
+    if (deleteState.deletingCategory && deleteState.continueDeleting) {
+      deleteCategory(deleteState.deletingCategory);
     }
+  }, [deleteState, dispatchRedux, token]);
+
+  // Called from CategoryAddEditModal
+  const editCateInState = (editedCategory) => {
+    dispatchRedux(categoryEdited(editedCategory));
+  };
+
+  const addCateInState = (newCategory) => {
+    dispatchRedux(categoryAdded(newCategory));
   };
 
   return (
@@ -133,13 +168,26 @@ const CategoryList = () => {
           {error}
         </Alert>
       )}
+
+      <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<AddIcon />}
+          onClick={handleCategoryAdd}
+        >
+          Add Category
+        </Button>
+      </Box>
+
       <MaterialTable
         icons={tableIcons}
         columns={columns}
-        data={categories}
+        data={categoryList}
         title="Category List"
         options={{
           filtering: true,
+          pageSize: 10,
           tableLayout: "auto",
           headerStyle: {
             backgroundColor: "#087f5b",
@@ -150,8 +198,8 @@ const CategoryList = () => {
         actions={[
           {
             icon: tableIcons.Edit,
-            tooltip: "Edit User",
-            onClick: (event, rowData) => handleUserEdit(rowData),
+            tooltip: "Edit Category",
+            onClick: (event, rowData) => handleCategoryEdit(rowData),
           },
 
           {
@@ -161,6 +209,32 @@ const CategoryList = () => {
           },
         ]}
       />
+
+      <Dialog
+        open={openDialog}
+        onClose={() => handleCloseDialog("no")}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete category?"}</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => handleCloseDialog("no")}>NO</Button>
+          <Button onClick={() => handleCloseDialog("yes")} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {open && (
+        <CategoryAddEditModal
+          open={open}
+          handleClose={handleClose}
+          rowData={rowData}
+          actionType={actionType}
+          editCateInState={editCateInState}
+          addCateInState={addCateInState}
+        />
+      )}
     </>
   );
 };

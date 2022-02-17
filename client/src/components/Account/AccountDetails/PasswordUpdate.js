@@ -103,7 +103,7 @@ const PasswordUpdate = () => {
       };
 
       const { data } = await axios.put(
-        "/api/v1/auth/updatePassword",
+        "/api/v1/user/updatePassword",
         values,
         config
       );
@@ -223,7 +223,7 @@ const PasswordUpdate = () => {
       </Formik>
 
       {error && (
-        <Alert severity="error" sx={{ mt: 1 }}>
+        <Alert severity="error" sx={{ mt: 2 }}>
           {error}
         </Alert>
       )}

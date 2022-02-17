@@ -45,6 +45,14 @@ const authUserSlice = createSlice({
       state.userInfo.last_name = lastName;
       state.userInfo.contact_number = contactNumber;
     },
+
+    addAddress(state, action) {
+      state.userInfo.default_address = action.payload;
+    },
+
+    editAddress(state, action) {
+      state.userInfo.default_address = action.payload;
+    },
   },
 });
 
@@ -55,6 +63,8 @@ export const {
   setIsAuthenticated,
   setUserInfo,
   updateUserInfo,
+  addAddress,
+  editAddress,
 } = authUserSlice.actions;
 
 export default authUserSlice.reducer;

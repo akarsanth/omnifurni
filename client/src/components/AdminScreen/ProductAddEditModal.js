@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 /////////////////////////////////////
 // FORMIK and YUP
 import { Formik, Form as FormikForm } from "formik";
-import { CATEGORY_ADD_EDIT_VALIDATION } from "../FormsUI/YupFormik";
+import { PRODUCT_ADD_EDIT_VALIDATION } from "../FormsUI/YupFormik";
 
 ////////////////////////////////
 // MUI Components
@@ -22,6 +22,8 @@ import TextField from "@mui/material/TextField";
 import FormFields from "../FormsUI/FormFieldsWrapper";
 import Textfield from "../FormsUI/Textfield";
 import Button from "../FormsUI/Button";
+import Checkbox from "../FormsUI/Checkbox";
+import SelectWrapper from "../FormsUI/Select";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Alert from "@mui/material/Alert";
 import ModalWrapper from "../AddEditModal";
@@ -56,14 +58,17 @@ const reducer = (state, action) => {
 
 /////////////////////////////////////
 // MAIN COMPONENT
-const CategotyAddEditModal = (props) => {
+const ProductAddEditModal = (props) => {
+  // Category List Global Reducer
+  const { categories } = useSelector((state) => state.categoryList);
+
   const {
     open,
     handleClose,
     rowData,
     actionType,
-    editCateInState,
-    addCateInState,
+    editProdInState,
+    addProdInState,
   } = props;
 
   // Reducer
@@ -117,18 +122,30 @@ const CategotyAddEditModal = (props) => {
   const dispatchRedux = useDispatch();
   const { token } = useSelector((state) => state.token);
 
-  const handleEdit = async (values) => {
+  const handleProductEdit = async (values) => {
     if (!imagePath) {
       setUploadError(true);
       return;
     }
 
     // Values
-    const categoryId = rowData.category_id;
+    const productId = rowData.product_id;
     const name = values.name;
     const description = values.description;
+    const price = values.price;
+    const countInStock = values.countInStock;
+    const category_id = values.category;
+    const featured = values.featured ? 1 : 0;
 
-    const details = { name, description, imagePath };
+    const details = {
+      name,
+      description,
+      price,
+      countInStock,
+      category_id,
+      featured,
+      imagePath,
+    };
 
     try {
       dispatch({ type: "RESET_STATE" });
@@ -143,7 +160,7 @@ const CategotyAddEditModal = (props) => {
       };
 
       const { data } = await axios.put(
-        `/api/v1/categories/${categoryId}`,
+        `/api/v1/products/${productId}`,
         details,
         config
       );
@@ -153,7 +170,7 @@ const CategotyAddEditModal = (props) => {
       // To display message
       dispatchRedux(updateSuccessMessage(data.message));
 
-      editCateInState(data.updatedCategory);
+      editProdInState(data.updatedProduct);
 
       // To close the modal
       handleClose();
@@ -168,17 +185,30 @@ const CategotyAddEditModal = (props) => {
     }
   };
 
-  const handleAdd = async (values) => {
+  const handleProductAdd = async (values) => {
     if (!imagePath) {
       setUploadError(true);
+      console.log("idar mc");
       return;
     }
 
     // Values
     const name = values.name;
     const description = values.description;
+    const price = values.price;
+    const countInStock = values.countInStock;
+    const category_id = values.category;
+    const featured = values.featured ? 1 : 0;
 
-    const details = { name, description, imagePath };
+    const details = {
+      name,
+      description,
+      price,
+      countInStock,
+      category_id,
+      featured,
+      imagePath,
+    };
 
     try {
       dispatch({ type: "RESET_STATE" });
@@ -192,14 +222,14 @@ const CategotyAddEditModal = (props) => {
         },
       };
 
-      const { data } = await axios.post(`/api/v1/categories`, details, config);
+      const { data } = await axios.post(`/api/v1/products`, details, config);
 
       dispatch({ type: "SUCCESS" });
 
       // To display message
       dispatchRedux(updateSuccessMessage(data.message));
 
-      addCateInState(data.createdCategory);
+      addProdInState(data.createdProduct);
 
       // To close the modal
       handleClose();
@@ -218,7 +248,7 @@ const CategotyAddEditModal = (props) => {
     <>
       <ModalWrapper open={open} handleClose={handleClose}>
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
-          {`${actionType} category details`}
+          {`${actionType} product details`}
         </Typography>
 
         <Formik
@@ -227,20 +257,28 @@ const CategotyAddEditModal = (props) => {
               ? {
                   name: rowData.name,
                   description: rowData.description,
+                  price: rowData.price,
+                  countInStock: rowData.countInStock,
+                  category: rowData.category_id,
                   imagePath,
                 }
               : {
                   name: "",
                   description: "",
+                  price: "",
+                  countInStock: "",
+                  category: "",
                   imagePath,
                 }
           }
-          validationSchema={CATEGORY_ADD_EDIT_VALIDATION}
-          onSubmit={actionType === "Edit" ? handleEdit : handleAdd}
+          validationSchema={PRODUCT_ADD_EDIT_VALIDATION}
+          onSubmit={
+            actionType === "Edit" ? handleProductEdit : handleProductAdd
+          }
         >
           <FormikForm>
             <FormFields>
-              <Textfield label="Category Name" name="name" required />
+              <Textfield label="Product Name" name="name" required />
 
               <Textfield
                 label="Description"
@@ -248,6 +286,22 @@ const CategotyAddEditModal = (props) => {
                 multiline
                 rows={4}
                 required
+              />
+
+              <Textfield label="Price" name="price" required />
+
+              <Textfield label="Count In Stock" name="countInStock" required />
+
+              <SelectWrapper
+                name="category"
+                label="Category"
+                list={categories.map((category) => {
+                  return {
+                    id: category.category_id,
+                    value: category.category_id,
+                    text: category.name,
+                  };
+                })}
               />
 
               {/* Upload */}
@@ -269,6 +323,20 @@ const CategotyAddEditModal = (props) => {
                 </MUIButton>
               </Box>
 
+              <Checkbox
+                label="Featured?"
+                // defaultChecked={rowData.role === 0 ? false : true}
+                defaultChecked={
+                  rowData.featured
+                    ? rowData.featured === 0
+                      ? false
+                      : true
+                    : false
+                }
+                name="featured"
+                sx={{ mt: -1.5 }}
+              />
+
               <Button
                 color="secondary"
                 endIcon={<KeyboardArrowRightIcon />}
@@ -284,10 +352,14 @@ const CategotyAddEditModal = (props) => {
           </FormikForm>
         </Formik>
 
-        {error && <Alert sererity="error">{error}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ my: 2 }}>
+            {error}
+          </Alert>
+        )}
       </ModalWrapper>
     </>
   );
 };
 
-export default CategotyAddEditModal;
+export default ProductAddEditModal;

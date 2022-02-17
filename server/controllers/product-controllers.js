@@ -6,7 +6,7 @@ const Category = db.category;
 const Review = db.review;
 const User = db.user;
 
-// @desc    Fetch all products
+// @desc    Fetch all featured products
 // @route   GET api/v1/products
 // @access  Public (anything can hit it)
 const findAllFeaturedProducts = asyncHandler(async (req, res) => {
@@ -58,91 +58,41 @@ const findAllFeaturedProducts = asyncHandler(async (req, res) => {
 const findProductById = asyncHandler(async (req, res) => {
   const productId = req.params.id;
 
-  try {
-    const product = await Product.findOne({
-      where: {
-        product_id: productId,
+  const product = await Product.findOne({
+    where: {
+      product_id: productId,
+    },
+    attributes: { exclude: ["category_id"] },
+    include: [
+      {
+        model: Category,
+        required: true,
+        attributes: ["category_id", "name"],
       },
-      attributes: { exclude: ["category_id"] },
-      include: [
-        {
-          model: Category,
-          required: true,
-          attributes: ["category_id", "name"],
+
+      {
+        model: Review,
+        attributes: { exclude: ["user_id"] },
+        include: {
+          model: User,
+          attributes: ["user_id", "first_name", "last_name"],
         },
+      },
+    ],
+  });
 
-        {
-          model: Review,
-          attributes: { exclude: ["user_id"] },
-          include: {
-            model: User,
-            attributes: ["user_id", "first_name", "last_name"],
-          },
-        },
-      ],
-    });
-
-    // // if product is found
-    // // if id is formatted validly
-    if (product) {
-      return res.json(product);
-    } else {
-      // not found error code
-      res.status(404);
-      throw new Error("Cannot find the product!");
-    }
-  } catch (error) {
-    res.status(500);
-    throw new Error("Error retrieving product!");
+  // // if product is found
+  // // if id is formatted validly
+  if (product) {
+    return res.json(product);
+  } else {
+    // not found error code
+    res.status(404);
+    throw new Error("Cannot find the product!");
   }
-});
-
-// @desc    Delete a product
-// @route   DELETE /api/v1/products/:id
-// @access  Private/Admin
-const deleteProduct = asyncHandler(async (req, res) => {
-  const productId = req.params.id;
-
-  try {
-    const num = await Product.destroy({ where: { product_id: productId } });
-    console.log(num);
-
-    if (num == 1) {
-      res.json({ message: "Product removed succesfully!" });
-    } else {
-      res.json({ message: "Product could not be found!" });
-    }
-  } catch (error) {
-    res.status(500);
-    throw new Error(
-      "Error while deleting product. Maybe the product id is invalid!"
-    );
-  }
-});
-
-// @desc    Create a product
-// @route   POST /api/v1/products
-// @access  Private/Admin
-const createProduct = asyncHandler(async (req, res) => {
-  const product = {
-    name: "Sample name",
-    description: "Sample description",
-    price: 0,
-    // user: req.user._id,
-    user_id: 28,
-    imagePath: "/images/sample.jpg",
-    countInStock: 0,
-    numReviews: 0,
-    rating: 0,
-    category_id: null,
-  };
-
-  const createdProduct = await Product.create(product);
-  res.status(201).json(createdProduct);
 });
 
 // reviews
-
 // @desc    Get product reviews
 // @route   GET /api/v1/products/:id/reviews
 // @access  Private
@@ -196,10 +146,182 @@ const createProductReview = asyncHandler(async (req, res) => {
   res.status(201).json(createdReview);
 });
 
+////////////////////////////////
+// Admin
+
+// @desc    Fetch all products
+// @route   GET api/v1/products
+// @access  Protected/Admin
+const findAllProducts = asyncHandler(async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      attributes: [
+        "product_id",
+        "name",
+        "description",
+        "price",
+        "imagePath",
+        "countInStock",
+        "user_id",
+        "category_id",
+        "featured",
+        [db.sequelize.col("category.name"), "category_name"],
+      ],
+
+      include: {
+        model: Category,
+        as: "category",
+        attributes: [],
+      },
+    });
+    res.json(products);
+  } catch (error) {
+    res.status(500);
+    throw new Error("Error retrieving product details!");
+  }
+});
+
+// @desc    Delete a product
+// @route   DELETE /api/v1/products/:id
+// @access  Protected/Admin
+const deleteProduct = asyncHandler(async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+    const num = await Product.destroy({ where: { product_id: productId } });
+
+    if (num == 1) {
+      res.json({ message: "Product removed succesfully!" });
+    } else {
+      res.status(500);
+      throw new Error("Product could not be found!");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
+// @desc    Create a product
+// @route   POST /api/v1/products
+// @access  Protected/Admin
+const createProduct = asyncHandler(async (req, res) => {
+  const {
+    name,
+    description,
+    price,
+    imagePath,
+    countInStock,
+    category_id,
+    featured,
+  } = req.body;
+
+  const product = {
+    name,
+    description,
+    price,
+    imagePath,
+    countInStock,
+    category_id,
+    user_id: req.user.id,
+    featured,
+  };
+
+  const newProduct = await Product.create(product);
+
+  // Adding category info
+  const createdProduct = await Product.findByPk(newProduct.product_id, {
+    attributes: [
+      "product_id",
+      "name",
+      "description",
+      "price",
+      "imagePath",
+      "countInStock",
+      "user_id",
+      "category_id",
+      "featured",
+      [db.sequelize.col("category.name"), "category_name"],
+    ],
+
+    include: {
+      model: Category,
+      as: "category",
+      attributes: [],
+    },
+  });
+
+  res.status(201).json({
+    message: "Product created Successfully",
+    createdProduct,
+  });
+});
+
+// @desc    To update product by id
+// @route   PUT /api/v1/products/:id
+// @access  Protected/Admin
+const updateProduct = asyncHandler(async (req, res) => {
+  try {
+    const {
+      name,
+      description,
+      price,
+      imagePath,
+      countInStock,
+      category_id,
+      featured,
+    } = req.body;
+
+    const product = await Product.findByPk(req.params.id);
+
+    if (product) {
+      product.name = name;
+      product.description = description;
+      product.price = price;
+      (product.imagePath = imagePath), (product.countInStock = countInStock);
+      product.category_id = category_id;
+      product.featured = featured;
+    }
+
+    const editedProduct = await product.save();
+
+    // Adding category info
+    const updatedProduct = await Product.findByPk(editedProduct.product_id, {
+      attributes: [
+        "product_id",
+        "name",
+        "description",
+        "price",
+        "imagePath",
+        "countInStock",
+        "user_id",
+        "category_id",
+        "featured",
+        [db.sequelize.col("category.name"), "category_name"],
+      ],
+
+      include: {
+        model: Category,
+        as: "category",
+        attributes: [],
+      },
+    });
+
+    res.json({
+      message: "Product updated successfully",
+      updatedProduct,
+    });
+  } catch (err) {
+    res.status(500);
+    throw new Error("Product could not be updated at this moment. Try Again!");
+  }
+});
+
 export {
   findAllFeaturedProducts,
   findProductById,
+  createProductReview,
+  findAllProducts,
   deleteProduct,
   createProduct,
-  createProductReview,
+  updateProduct,
 };

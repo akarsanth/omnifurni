@@ -7,10 +7,11 @@ import sendMail from "./sendMail.js";
 // Database
 import db from "../models/index.js";
 const User = db.user;
+const DefaultAddress = db.defaultAddress;
 const Sequelize = db.Sequelize;
 
 // @desc    Add new user
-// @route   POST /api/v1/auth/register
+// @route   POST /api/v1/user/register
 // @access  Public (anything can hit it)
 const registerUser = asyncHandler(async (req, res) => {
   const { firstName, lastName, contactNumber, email, password } = req.body;
@@ -66,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    To activate user
-// @route   POST /api/v1/auth/activation
+// @route   POST /api/v1/user/activation
 // @access  Public (anything can hit it)
 // called from email http://localhost:3000/user/activate/:activationToken
 const activateEmail = asyncHandler(async (req, res) => {
@@ -106,13 +107,12 @@ const activateEmail = asyncHandler(async (req, res) => {
 
     if (savedUser) res.json({ message: "Account has been activated!" });
   } catch (error) {
-    res.status(500);
     throw new Error(error.message);
   }
 });
 
 // @desc    For Login
-// @route   POST /api/v1/auth/login
+// @route   POST /api/v1/user/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -141,14 +141,14 @@ const loginUser = asyncHandler(async (req, res) => {
   res.cookie("refreshtoken", refreshToken, {
     httpOnly: true,
     // path to get refresh token
-    path: "/api/v1/auth/refreshToken",
+    path: "/api/v1/user/refreshToken",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
   res.json({ message: "Login success!" });
 });
 
 // @desc    Get Access Token
-// @route   POST /api/v1/auth/refreshToken
+// @route   POST /api/v1/user/refreshToken
 // @access  Public (anything can hit it)
 // to get access token from cookies
 // refresh token is set in cookie
@@ -181,7 +181,7 @@ const getAccessToken = asyncHandler(async (req, res) => {
 });
 
 // @desc    To handle forgot password
-// @route   POST /api/v1/auth/forgot
+// @route   POST /api/v1/user/forgot
 // @access  Public (anything can hit it)
 const forgotPassword = asyncHandler(async (req, res) => {
   try {
@@ -210,13 +210,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
       message: `Please check your email ${email} for email verification!`,
     });
   } catch (err) {
-    res.status(500);
     throw new Error(err.message);
   }
 });
 
 // @desc    Reset Password
-// @route   POST /api/v1/auth/reset
+// @route   POST /api/v1/user/reset
 // @access  Public (anything can hit it)
 const resetPassword = async (req, res) => {
   try {
@@ -240,13 +239,17 @@ const resetPassword = async (req, res) => {
 };
 
 // @desc    To get user info
-// @route   POST /api/v1/auth/info
+// @route   POST /api/v1/user/info
 // @access  Protected
 const getUserInfo = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
       attributes: {
-        exclude: ["password"],
+        exclude: ["password", "address_id"],
+      },
+
+      include: {
+        model: DefaultAddress,
       },
     });
 
@@ -257,8 +260,8 @@ const getUserInfo = async (req, res) => {
   }
 };
 
-// @desc    Reset Password
-// @route   POST /api/v1/auth/reset
+// @desc    To reset password
+// @route   POST /api/v1/user/reset
 // @access  Public (anything can hit it)
 const updateUserDetails = asyncHandler(async (req, res) => {
   try {
@@ -283,8 +286,8 @@ const updateUserDetails = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Reset Password
-// @route   POST /api/v1/auth/reset
+// @desc    To update password
+// @route   POST /api/v1/user/updatePassword
 // @access  Public (anything can hit it)
 const updatePassword = asyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
@@ -322,7 +325,7 @@ const updatePassword = asyncHandler(async (req, res) => {
 });
 
 // @desc    To get all users info
-// @route   POST /api/v1/auth/allUsersInfo
+// @route   POST /api/v1/user/allUsersInfo
 // @access  Protected (auth + admin)
 const getAllUsersInfo = async (req, res) => {
   try {
@@ -345,28 +348,20 @@ const getAllUsersInfo = async (req, res) => {
   }
 };
 
-// @desc    To edit users info
-// @route   POST /api/v1/auth/allUsersInfo
+// @desc    To update users info
+// @route   PUT /api/v1/user/editUser/:id
 // @access  Protected (auth + admin)
-const editUser = asyncHandler(async (req, res) => {
+const updateUser = asyncHandler(async (req, res) => {
   try {
-    const { userId, firstName, lastName, role } = req.body;
+    const { firstName, lastName, role } = req.body;
 
-    console.log("============================");
-    console.log(req.body);
-    console.log("============================");
-
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(req.params.id);
 
     if (user) {
       user.first_name = firstName || user.first_name;
       user.last_name = lastName || user.last_name;
       user.role = role;
     }
-
-    console.log("---------------------------");
-    console.log(user);
-    console.log("---------------------------");
 
     const updatedUser = await user.save();
 
@@ -382,11 +377,83 @@ const editUser = asyncHandler(async (req, res) => {
   }
 });
 
+////////////////////////////////////
+// Address
+
+// @desc    To add user address
+// @route   PUT /api/v1/user/address
+// @access  Protected (auth)
+const addAddress = asyncHandler(async (req, res) => {
+  try {
+    const { city, postal_code, street, province } = req.body;
+
+    const address = { city, postal_code, street, province };
+
+    // Checking if user already has address
+    const user = await User.findByPk(req.user.id, {
+      attributes: ["address_id"],
+    });
+    if (user.address_id) {
+      res.status(500);
+      throw new Error("Address already exists!");
+    }
+
+    const addedAddress = await DefaultAddress.create(address);
+
+    if (addedAddress) {
+      const user = await User.findByPk(req.user.id);
+
+      if (user) {
+        user.address_id = addedAddress.address_id;
+      }
+
+      await user.save();
+
+      res.json({
+        message: "Address added successfully",
+        addedAddress,
+      });
+    }
+  } catch (err) {
+    throw new Error(err.message);
+  }
+});
+// @desc    To edit user address
+// @route   PUT /api/v1/user/address/:id
+// @access  Protected (auth)
+const editAddress = asyncHandler(async (req, res) => {
+  try {
+    const { city, postal_code, street, province } = req.body;
+
+    // new details
+    const address = { city, postal_code, street, province };
+
+    // Finding the address
+    const defaultAddress = await DefaultAddress.findByPk(req.params.id);
+
+    if (defaultAddress) {
+      defaultAddress.city = city;
+      defaultAddress.postal_code = postal_code;
+      defaultAddress.street = street;
+      defaultAddress.province = province;
+    }
+
+    const updatedAddress = await defaultAddress.save();
+
+    res.json({
+      message: "Address updated successfully",
+      updatedAddress,
+    });
+  } catch (err) {
+    throw new Error("Address could not be updated at this moment. Try Again!");
+  }
+});
+
 //////////////////////////////////
 // logout
 const logout = async (req, res) => {
   try {
-    res.clearCookie("refreshtoken", { path: "/api/v1/auth/refreshToken" });
+    res.clearCookie("refreshtoken", { path: "/api/v1/user/refreshToken" });
     return res.json({ msg: "Logged out!" });
   } catch (err) {
     res.status(500);
@@ -426,5 +493,7 @@ export {
   updateUserDetails,
   updatePassword,
   getAllUsersInfo,
-  editUser,
+  updateUser,
+  addAddress,
+  editAddress,
 };

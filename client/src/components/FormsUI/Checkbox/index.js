@@ -5,7 +5,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { useField, useFormikContext } from "formik";
 
 const CheckboxWrapper = ({ name, defaultChecked, ...otherProps }) => {
-  const [field, meta] = useField(name);
+  const [field] = useField(name);
   const { setFieldValue } = useFormikContext();
 
   const handleChange = (event) => {

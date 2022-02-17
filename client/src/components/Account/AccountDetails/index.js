@@ -4,11 +4,11 @@ import React from "react";
 import DetailsUpdate from "./DetailsUpdate";
 import PasswordUpdate from "./PasswordUpdate";
 
-////////////////////////////////
+//////////////////////////////////////
 // MUI Components
 import Box from "@mui/material/Box";
 
-////////////////////////////////////
+//////////////////////////////////////
 // MAIN COMPONENT
 const AccountDetails = () => {
   return (

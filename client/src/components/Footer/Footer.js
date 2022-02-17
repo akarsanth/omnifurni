@@ -132,15 +132,15 @@ const Footer = () => {
               <FooterHeading>Omnifurni</FooterHeading>
 
               <FooterLinks>
-                <FooterLink component={RouterLink} to="/">
+                <FooterLink component={RouterLink} to="/about">
                   About Omnifurni
                 </FooterLink>
 
-                <FooterLink component={RouterLink} to="/">
+                <FooterLink component={RouterLink} to="/faq">
                   FAQ
                 </FooterLink>
 
-                <FooterLink component={RouterLink} to="/">
+                <FooterLink component={RouterLink} to="/privacy">
                   Privacy Policy
                 </FooterLink>
               </FooterLinks>
@@ -150,11 +150,11 @@ const Footer = () => {
               <FooterHeading>Customer Service</FooterHeading>
 
               <FooterLinks>
-                <FooterLink component={RouterLink} to="/">
+                <FooterLink component={RouterLink} to="/account/dashboard">
                   My Account
                 </FooterLink>
 
-                <FooterLink component={RouterLink} to="/">
+                <FooterLink component={RouterLink} to="/contact">
                   Contact Us
                 </FooterLink>
               </FooterLinks>

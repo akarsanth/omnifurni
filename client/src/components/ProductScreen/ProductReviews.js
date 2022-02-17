@@ -228,9 +228,16 @@ const ProductReviews = (props) => {
               }}
               size="small"
               onClick={reviewSubmitHandler}
+              loading={`${isLoading}`}
             >
               Submit
             </Button>
+
+            {error && (
+              <Alert severity="error" sx={{ my: 2 }}>
+                {error}
+              </Alert>
+            )}
           </Box>
         )
       ) : (

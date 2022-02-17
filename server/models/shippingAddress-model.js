@@ -26,7 +26,7 @@ export default (sequelize, Sequelize) => {
       },
 
       province: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
       },
     },

@@ -40,6 +40,24 @@ export const categoryListSlice = createSlice({
 
       state.categories = [...updatedList];
     },
+
+    categoryEdited(state, action) {
+      const editedCategory = action.payload;
+
+      const newList = state.categories.map((category) =>
+        category.category_id !== editedCategory.category_id
+          ? category
+          : editedCategory
+      );
+
+      state.categories = newList;
+    },
+
+    categoryAdded(state, action) {
+      const addedCategory = action.payload;
+
+      state.categories = [...state.categories, addedCategory];
+    },
   },
 });
 
@@ -49,6 +67,8 @@ export const {
   categoryListFail,
   updateCategoryList,
   categoryDeleted,
+  categoryEdited,
+  categoryAdded,
 } = categoryListSlice.actions;
 
 export default categoryListSlice.reducer;

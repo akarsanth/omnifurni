@@ -1,17 +1,17 @@
 // importing dependencies
+import path from "path";
 import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import fileUpload from "express-fileupload";
-
-// importing error middlewares
-import { notFound, errorHandler } from "./middlewares/error-middlewares.js";
 
 // reading environmetal variable file
 import dotenv from "dotenv";
 dotenv.config();
+
+// importing error middlewares
+import { notFound, errorHandler } from "./middlewares/error-middlewares.js";
 
 // db connection from index.js file
 // import db from "./models/index.js";
@@ -32,11 +32,6 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
 app.use(cookieParser());
-app.use(
-  fileUpload({
-    useTempFiles: true,
-  })
-);
 
 // create home route
 app.get("/", (req, res) => {
@@ -48,6 +43,10 @@ app.get("/", (req, res) => {
 // setting up api
 import api from "./routes/index.js";
 app.use("/api/v1", api);
+
+// Upload
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 // ----------------Middlewares-----------------//
 // to handle invalid page

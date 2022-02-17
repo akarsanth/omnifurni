@@ -29,7 +29,7 @@ export const authUser = (loginDetails) => {
       // data will come from backend server
       // data => message + token
       const { data } = await axios.post(
-        "/api/v1/auth/login",
+        "/api/v1/user/login",
         { email, password },
         config
       );
@@ -54,7 +54,7 @@ export const authUser = (loginDetails) => {
 // called after getting the token from cookie
 export const fetchAuthUser = (token) => {
   return async (dispatch) => {
-    const response = await axios.get("/api/v1/auth/info", {
+    const response = await axios.get("/api/v1/user/info", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -72,7 +72,7 @@ export const fetchAuthUser = (token) => {
 export const logout = () => {
   return async (dispatch) => {
     try {
-      await axios.get("/api/v1/auth/logout");
+      await axios.get("/api/v1/user/logout");
       localStorage.removeItem("firstLogin");
       window.location.href = "/";
     } catch (err) {

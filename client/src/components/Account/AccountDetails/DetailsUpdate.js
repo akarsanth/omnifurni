@@ -88,11 +88,7 @@ const DetailsUpdate = () => {
         },
       };
 
-      const { data } = await axios.put(
-        "/api/v1/auth/userDetails",
-        values,
-        config
-      );
+      const { data } = await axios.put("/api/v1/user/info", values, config);
 
       dispatch({ type: "UPDATE_USER_SUCCESS", payload: data.message });
 

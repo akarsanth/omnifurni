@@ -5,7 +5,7 @@ import axios from "axios";
 export const getToken = () => {
   return async (dispatch) => {
     try {
-      const { data } = await axios.post("/api/v1/auth/refreshToken", null);
+      const { data } = await axios.post("/api/v1/user/refreshToken", null);
 
       dispatch(setToken(data.accessToken));
     } catch (error) {

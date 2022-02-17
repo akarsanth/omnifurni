@@ -12,6 +12,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import Link from "@mui/material/Link";
 import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
 
 /////////////////////////////////////////
 // Components Import
@@ -82,6 +83,11 @@ const ProductScreen = () => {
   return (
     <Container sx={{ pt: 5, pb: 10 }}>
       {isLoading && <CircularProgress />}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
       <Box>
         <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 3 }}>
           <Link

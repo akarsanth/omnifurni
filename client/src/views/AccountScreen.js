@@ -7,6 +7,11 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+/////////////////////////////////////
+// Redux
+import { useDispatch } from "react-redux";
+import { logout } from "../app/features/authUser/authUser-actions";
+
 //////////////////////////////////////
 // MUI
 import Box from "@mui/material/Box";
@@ -60,9 +65,12 @@ const locationList = {
   },
 };
 
+//////////////////////////////////////////
+// MAIN COMPONENT
 const AccountScreen = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [selectedList, setSelectedList] = useState("Dashboard");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -84,6 +92,11 @@ const AccountScreen = () => {
   //   setSelectedIndex(index);
   //   setSelectedList(indexText[index]);
   // };
+
+  // logout handler
+  const logoutHandler = (e) => {
+    dispatch(logout());
+  };
 
   return (
     <Box>
@@ -162,10 +175,7 @@ const AccountScreen = () => {
                   </ListItemButton>
                 </Link>
 
-                <ListItemButton
-                // selected={selectedIndex === 4}
-                // onClick={(event) => handleListItemClick(event, 4)}
-                >
+                <ListItemButton onClick={logoutHandler}>
                   <ListItemText primary="Logout" />
                 </ListItemButton>
               </List>

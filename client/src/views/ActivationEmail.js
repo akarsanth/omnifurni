@@ -1,12 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link as RouterLink, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+///////////////////////////////////////////
+// Redux
+import { useDispatch } from "react-redux";
+// To display success message
+import {
+  updateSuccessMessage,
+  updateErrorMessage,
+} from "../app/features/message/message-slice";
 
 ///////////////////////////////////////////////
 // MATERIAL UI
+import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+import Fade from "@mui/material/Fade";
+
+/////////////////////////////////////////////
+// Custom Component
+import FormContainer, { FormLink } from "../components/FormsUI/FormContainer";
 
 function ActivationEmail() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   // token from url
   const { activationToken } = useParams();
 
@@ -14,28 +33,59 @@ function ActivationEmail() {
   // based on post request response
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (activationToken) {
       const activationEmail = async () => {
+        setIsLoading(true);
         try {
-          const res = await axios.post("/api/v1/auth/activation", {
+          const { data } = await axios.post("/api/v1/user/activation", {
             activationToken,
           });
-          setSuccess(res.data.message);
+
+          setIsLoading(false);
+          setSuccess(data.message);
+          dispatch(updateSuccessMessage(data.message));
         } catch (err) {
-          err.response.data.message && setError(err.response.data.message);
+          setIsLoading(false);
+          if (err.response.data.message) {
+            dispatch(updateErrorMessage(err.response.data.message));
+            setError(err.response.data.message);
+          }
         }
       };
       activationEmail();
     }
-  }, [activationToken]);
+  }, [activationToken, dispatch]);
 
   return (
-    <div className="active_page">
-      {success && <Alert severity="success">{success}</Alert>}
-      {error && <Alert severity="error">{error}</Alert>}
-    </div>
+    <FormContainer>
+      <Typography sx={{ mb: 2 }} variant="h6">
+        User Activation
+      </Typography>
+      <Fade
+        in={isLoading}
+        style={{
+          transitionDelay: isLoading ? "0s" : "0ms",
+        }}
+        unmountOnExit
+      >
+        <CircularProgress sx={{ mt: 1 }} />
+      </Fade>
+
+      <Box sx={{ my: 2 }}>
+        {success && <Alert severity="success">{success}</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
+      </Box>
+
+      <Box sx={{ display: "flex", gap: 1 }}>
+        <Typography variant="body2">Go to Login?</Typography>
+        <FormLink to="/login" component={RouterLink} underline="none">
+          <Typography variant="body2">Login!</Typography>
+        </FormLink>
+      </Box>
+    </FormContainer>
   );
 }
 

@@ -2,7 +2,7 @@ export default (sequelize, Sequelize) => {
   const { DataTypes } = Sequelize;
 
   const Order = sequelize.define(
-    "order",
+    "orders",
     {
       order_id: {
         type: DataTypes.INTEGER,

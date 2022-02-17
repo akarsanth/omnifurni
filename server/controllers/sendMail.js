@@ -1,3 +1,7 @@
+// reading environmetal variable file
+import dotenv from "dotenv";
+dotenv.config();
+
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
 const { OAuth2 } = google.auth;
@@ -8,6 +12,7 @@ const {
   MAILING_SERVICE_CLIENT_SECRET,
   MAILING_SERVICE_REFRESH_TOKEN,
   SENDER_EMAIL_ADDRESS,
+  NODE_ENV,
 } = process.env;
 
 const oauth2Client = new OAuth2(

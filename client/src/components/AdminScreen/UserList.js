@@ -12,6 +12,12 @@ import tableIcons from "../../tables/IconsProvider";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
+////////////////////////////////////////
+// MUI COMPONENTS
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+
 /////////////////////////////////////////
 // Component Import
 import UserEditModal from "./UserEditModal";
@@ -91,6 +97,8 @@ const columns = [
   },
 ];
 
+////////////////////////////////////////////////
+// MAIN COMPONENT
 const UserList = () => {
   // reducers
   const [state, dispatch] = useReducer(userListReducer, initialState);
@@ -112,7 +120,7 @@ const UserList = () => {
           },
         };
 
-        const { data } = await axios.get("/api/v1/auth/allUsersInfo", config);
+        const { data } = await axios.get("/api/v1/user/allUsersInfo", config);
 
         dispatch({ type: "USER_LIST_SUCCESS", payload: data });
       } catch (error) {
@@ -142,21 +150,24 @@ const UserList = () => {
     handleOpen();
   };
 
-  // Update List State
   // Called from UserEditModal after
   // Successful Edit
-  const updateList = (updatedUser) => {
+  const editUserInState = (editedUser) => {
     const users = userList.map((user) =>
-      user.user_id !== updatedUser.user_id ? user : updatedUser
+      user.user_id !== editedUser.user_id ? user : editedUser
     );
-
-    console.log(users);
 
     dispatch({ type: "USER_LIST_UPDATE", payload: users });
   };
 
   return (
     <>
+      {error && <Alert severity="error">{error}</Alert>}
+      {isLoading && (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
+      )}
       <MaterialTable
         icons={tableIcons}
         columns={columns}
@@ -183,9 +194,8 @@ const UserList = () => {
         <UserEditModal
           open={open}
           handleClose={handleClose}
-          handleOpen={handleOpen}
           rowData={rowData}
-          updateList={updateList}
+          editUserInState={editUserInState}
         />
       )}
     </>
