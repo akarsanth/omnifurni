@@ -4,6 +4,11 @@ import axios from "axios";
 import { Link as RouterLink, useParams, useNavigate } from "react-router-dom";
 
 //////////////////////////////////
+// Redux Related
+import { useDispatch } from "react-redux";
+import { updateSuccessMessage } from "../app/features/message/message-slice";
+
+//////////////////////////////////
 // FORMIK and YUP
 import { Formik, Form as FormikForm } from "formik";
 import {
@@ -33,13 +38,17 @@ import InputAdornment from "@mui/material/InputAdornment";
 // MAIN COMPONENT
 const INITIAL_STATE = {
   isLoading: false,
-  error: null,
-  success: null,
+  error: "",
+  success: false,
 };
 
+//////////////////////////////////
+// MAIN COMPONENT
 const ResetPassword = () => {
   // token from url
   const { token } = useParams();
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [state, setState] = useState(INITIAL_STATE);
@@ -68,9 +77,7 @@ const ResetPassword = () => {
   // navigating to login page
   useEffect(() => {
     if (success) {
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      navigate("/login");
     }
   }, [success, navigate]);
 
@@ -86,8 +93,8 @@ const ResetPassword = () => {
       // before request
       setState({ ...state, isLoading: true });
 
-      const res = await axios.post(
-        "/api/v1/auth/reset",
+      const { data } = await axios.post(
+        "/api/v1/user/reset",
         { password },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -97,9 +104,11 @@ const ResetPassword = () => {
       // after res success
       setState({
         isLoading: false,
-        success: res.data.message,
+        success: true,
         error: null,
       });
+
+      dispatch(updateSuccessMessage(data.message));
     } catch (err) {
       const errorMessage =
         error.response && error.response.data.message

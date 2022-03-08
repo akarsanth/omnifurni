@@ -1,7 +1,5 @@
 import dbConfig from "../config/dbConfig.js";
 
-console.log(dbConfig);
-
 // importing Sequelize
 import Sequelize from "sequelize";
 // const { DataTypes } = Sequelize;

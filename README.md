@@ -6,7 +6,8 @@ Final Year Project Furniture Shop eCommerce Web Application
 
 1. API endpoints
 
-///////////////////////////////
-ACCESS_TOKEN_SECRET = YOUR_ACCESS_TOKEN_SECRET
-REFRESH_TOKEN_SECRET = YOUR_REFRESH_TOKEN_SECRET
-ACTIVATION_TOKEN_SECRET = YOUR_ACTIVATION_TOKEN_SECRET
+# Dependencies (Modules) used to send email
+
+1. Email JS => For contact us form. EmailJS helps to send emails using client-side technologies only
+2. Nodemailer => To send email for verfication of email (For Forgot Password and user registration)
+3. Mailchimp => To collect list of user email for newletter subscription

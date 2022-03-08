@@ -73,7 +73,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 // Search Component
 ////////////////////////////////////////////////
-
 const DesktopSearchBar = () => {
   const navigate = useNavigate();
 
@@ -83,7 +82,10 @@ const DesktopSearchBar = () => {
     e.preventDefault();
 
     if (!searchText) return;
-    navigate("/search");
+
+    navigate(`/search/?q=${searchText.trim()}`);
+
+    setSearchText("");
   };
   return (
     <Search>
@@ -92,7 +94,7 @@ const DesktopSearchBar = () => {
           <SearchIcon />
         </SearchIconButton>
         <StyledInputBase
-          placeholder="Search product...."
+          placeholder="Search products...."
           inputProps={{ "aria-label": "search" }}
           onChange={(e) => setSearchText(e.target.value)}
           value={searchText}

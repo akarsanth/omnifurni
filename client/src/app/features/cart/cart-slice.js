@@ -1,33 +1,121 @@
 import { createSlice } from "@reduxjs/toolkit";
+import localForage from "localforage";
+
+////////////////////////////////////
 
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    cartId: null,
-    products: [],
+    cartItems: [],
     totalQuantity: 0,
     total: 0,
   },
 
   reducers: {
-    replaceCart(state, action) {
-      const products = action.payload.products;
+    updateCart(state) {
+      state.totalQuantity = state.cartItems.reduce(
+        (acc, item) => acc + item.qty,
+        0
+      );
 
-      state.cartId = action.payload.cart_id;
+      state.total = state.cartItems.reduce(
+        (acc, item) => acc + item.price * item.qty,
+        0
+      );
+    },
+
+    // In the beginning
+    replaceCart(state, action) {
+      const cartItems = action.payload;
+
       // products state
-      state.products = products;
+      state.cartItems = cartItems;
       // total quantity calculation
-      state.totalQuantity = products.reduce(
-        (acc, product) => acc + product.cart_line.quantity,
+      state.totalQuantity = cartItems.reduce((acc, item) => acc + item.qty, 0);
+
+      state.total = cartItems.reduce(
+        (acc, item) => acc + item.price * item.qty,
+        0
+      );
+    },
+
+    addItemToCart(state, action) {
+      const addedItem = action.payload;
+
+      // checking if item already exists
+      // set in the console if necessary
+      const existsItem = state.cartItems.find(
+        (item) => item.product_id === addedItem.product_id
+      );
+
+      if (existsItem) {
+        state.cartItems = state.cartItems.map((item) =>
+          item.product_id === existsItem.product_id ? addedItem : item
+        );
+      } else {
+        state.cartItems = [...state.cartItems, addedItem];
+      }
+
+      state.totalQuantity = state.cartItems.reduce(
+        (acc, item) => acc + item.qty,
+        0
+      );
+
+      state.total = state.cartItems.reduce(
+        (acc, item) => acc + item.price * item.qty,
+        0
+      );
+    },
+
+    removeItemFromCart(state, action) {
+      const productId = action.payload;
+
+      state.cartItems = state.cartItems.filter(
+        (item) => item.product_id !== productId
+      );
+
+      //
+      state.totalQuantity = state.cartItems.reduce(
+        (acc, item) => acc + item.qty,
+        0
+      );
+
+      state.total = state.cartItems.reduce(
+        (acc, item) => acc + item.price * item.qty,
+        0
+      );
+    },
+
+    updateItemQuantity(state, action) {
+      const productId = action.payload.id;
+      const newQuantity = action.payload.qty;
+
+      state.cartItems = state.cartItems.map((item) => {
+        if (item.product_id === productId) {
+          item.qty = newQuantity;
+        }
+        return item;
+      });
+
+      //
+      state.totalQuantity = state.cartItems.reduce(
+        (acc, item) => acc + item.qty,
+        0
+      );
+
+      state.total = state.cartItems.reduce(
+        (acc, item) => acc + item.price * item.qty,
         0
       );
     },
   },
 });
 
-export const { replaceCart } = cartSlice.actions;
+export const {
+  replaceCart,
+  addItemToCart,
+  removeItemFromCart,
+  updateItemQuantity,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;
-
-//https://javascript.plainenglish.io/lets-add-a-shopping-cart-feature-in-vue-js-for-our-ecommerce-app-ae0cc65374ff
-// cart needs to be protected

@@ -341,12 +341,12 @@ const ProductAddEditModal = (props) => {
                 color="secondary"
                 endIcon={<KeyboardArrowRightIcon />}
                 disableElevation
-                sx={{ alignSelf: "flex-start" }}
+                // sx={{ alignSelf: "flex-start" }}
                 loading={isLoading}
-                fullWidth
-                disabled={uploading}
+                // fullWidth
+                // disabled={uploading}
               >
-                {actionType === "Edit" ? "Save Changes" : "Add Category"}
+                {actionType === "Edit" ? "Save Changes" : "Add Product"}
               </Button>
             </FormFields>
           </FormikForm>

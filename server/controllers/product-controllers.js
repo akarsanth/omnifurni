@@ -5,6 +5,7 @@ const Product = db.product;
 const Category = db.category;
 const Review = db.review;
 const User = db.user;
+const Op = db.Sequelize.Op;
 
 // @desc    Fetch all featured products
 // @route   GET api/v1/products
@@ -89,6 +90,46 @@ const findProductById = asyncHandler(async (req, res) => {
     // not found error code
     res.status(404);
     throw new Error("Cannot find the product!");
+  }
+});
+
+// @desc    Get search products
+// @route   GET /api/v1/products/search?keyword=[keyword]
+// @access  Public
+const getSearchedProducts = asyncHandler(async (req, res) => {
+  const keyword = req.query.keyword.toLowerCase();
+
+  const matchedProducts = await Product.findAll({
+    where: {
+      name: {
+        [Op.like]: `%${keyword}%`,
+      },
+    },
+  });
+
+  res.json(matchedProducts);
+});
+
+// @desc    Find product by catetory
+// @route   GET /api/v1/products?category=[id]
+// @access  Public
+const findProductsByCategory = asyncHandler(async (req, res) => {
+  const categoryId = req.params.id;
+
+  const product = await Product.findAll({
+    where: {
+      category_id: categoryId,
+    },
+  });
+
+  // // if product is found
+  // // if id is formatted validly
+  if (product) {
+    return res.json(product);
+  } else {
+    // not found error code
+    res.status(404);
+    throw new Error("Could not fetch the products!");
   }
 });
 
@@ -319,6 +360,8 @@ const updateProduct = asyncHandler(async (req, res) => {
 export {
   findAllFeaturedProducts,
   findProductById,
+  getSearchedProducts,
+  findProductsByCategory,
   createProductReview,
   findAllProducts,
   deleteProduct,

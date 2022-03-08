@@ -34,6 +34,7 @@ import ContactUsScreen from "./views/ContactUsScreen";
 import AboutScreen from "./views/InfoScreens/AboutScreen";
 import FAQScreen from "./views/InfoScreens/FAQScreen";
 import PrivacyScreen from "./views/InfoScreens/PrivacyPolicyScreen";
+import SearchScreen from "./views/SearchScreen";
 
 // Account Screen
 import AccountScreen from "./views/AccountScreen";
@@ -57,6 +58,7 @@ import { CssBaseline } from "@mui/material";
 //////////////////////////////////////////
 // Component Import
 import Message from "./components/Message";
+import CheckoutScreen from "./views/CheckoutScreen";
 
 const theme = createTheme({
   palette: {
@@ -92,7 +94,7 @@ function App() {
 
   const { isAuthenticated } = useSelector((state) => state.authUser);
 
-  const { success, error } = useSelector((state) => state.message);
+  const { success, info, error } = useSelector((state) => state.message);
 
   // when isAuthenticated is changed
   // i.e. login status is changed
@@ -155,9 +157,13 @@ function App() {
               {/* Contact Us Screen */}
               <Route path="/contact" element={<ContactUsScreen />} />
 
+              {/* Search */}
+              <Route path="/search" element={<SearchScreen />} />
+
               {/* PROTECTED ROUTES */}
               <Route element={<ProtectedRoutes />}>
                 <Route path="/cart" element={<CartScreen />} />
+                <Route path="/checkout" element={<CheckoutScreen />} />
 
                 {/* Account Screen */}
                 <Route path="/account" element={<AccountScreen />}>
@@ -182,6 +188,7 @@ function App() {
 
             {/* Global message component */}
             {success && <Message message={success} />}
+            {info && <Message message={info} severity="warning" />}
             {error && <Message message={error} severity="error" />}
           </Box>
         </Router>

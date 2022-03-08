@@ -167,11 +167,14 @@ const getAccessToken = asyncHandler(async (req, res) => {
 
     // if there is refresh token
     // verify the refresh token
+    // user = {id: someValue}
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
       if (err) return res.status(400).json({ msg: "Please login now!" });
 
       // create access token
       const accessToken = createAccessToken({ id: user.id });
+
+      // Sending access token as response
       res.json({ accessToken });
     });
   } catch (error) {
@@ -202,12 +205,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
     }
 
     // if user exists
-    const accessToken = createAccessToken({ id: user.id });
+    const accessToken = createAccessToken({ id: user.user_id });
     const url = `http://localhost:3000/user/reset/${accessToken}`;
 
     sendMail(email, url, "Reset your password");
     res.json({
-      message: `Please check your email ${email} for email verification!`,
+      message: `Please check your email '${email}' for email verification!`,
     });
   } catch (err) {
     throw new Error(err.message);
@@ -221,14 +224,13 @@ const resetPassword = async (req, res) => {
   try {
     const { password } = req.body;
 
-    console.log(password);
     const passwordHash = await bcrypt.hash(password, 12);
 
     await User.update(
       {
         password: passwordHash,
       },
-      { where: { id: req.user.id } }
+      { where: { user_id: req.user.id } }
     );
 
     res.json({ message: "Password successfully changed!" });

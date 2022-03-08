@@ -46,7 +46,16 @@ export default function ProductCard(props) {
             <Typography variant="subtitle2">{name}</Typography>
           </ProductTitle>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              rowGap: 0.1,
+              columnGap: 0.5,
+              mb: 1.5,
+            }}
+          >
             <Rating
               name="size-small"
               value={parseFloat(rating)}
@@ -60,7 +69,7 @@ export default function ProductCard(props) {
           </Box>
 
           <Typography color="primary" variant="subtitle1">
-            Rs. {price}
+            NPR {price}
           </Typography>
         </CardContent>
       </CardActionArea>

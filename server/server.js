@@ -5,6 +5,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import Mailchimp from "mailchimp-api-v3";
 
 // reading environmetal variable file
 import dotenv from "dotenv";
@@ -15,7 +16,6 @@ import { notFound, errorHandler } from "./middlewares/error-middlewares.js";
 
 // db connection from index.js file
 // import db from "./models/index.js";
-
 import("./config/passportJWT-setup.js");
 
 // create app through express
@@ -40,7 +40,25 @@ app.get("/", (req, res) => {
   });
 });
 
+// Mailchimp
+const { MAILCHIMP_API_KEY, LIST_ID } = process.env;
+const mailchimp = new Mailchimp(MAILCHIMP_API_KEY);
+app.get("/api/memberAdd", (req, res) => {
+  mailchimp
+    .post(`/lists/${LIST_ID}/members`, {
+      email_address: req.query.email,
+      status: "subscribed",
+    })
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
+
 // setting up api
+// base api
 import api from "./routes/index.js";
 app.use("/api/v1", api);
 

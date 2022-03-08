@@ -50,6 +50,7 @@ const ProductScreen = () => {
   const { isLoading, product, error } = state;
   const { category, reviews, ...productDetails } = product;
 
+  // If there is change in the product details (i.e review)
   const [changed, setChanged] = useState(false);
   useEffect(() => {
     const getProductDetails = async () => {
@@ -104,7 +105,7 @@ const ProductScreen = () => {
             underline="hover"
             color="inherit"
             component={RouterLink}
-            to={`/categories/${category.category_id}`}
+            to={`/category/${category.category_id}`}
           >
             {category.name}
           </Link>

@@ -13,8 +13,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Link from "@mui/material/Link";
-
-// }));
+import Box from "@mui/material/Box";
 
 export default function CategoryMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -30,18 +29,24 @@ export default function CategoryMenu() {
   const { categories } = useSelector((state) => state.categoryList);
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: {
+          xs: "none",
+          md: "block",
+        },
+      }}
+    >
       <Button
-        id="demo-customized-button"
-        aria-controls="demo-customized-menu"
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
-        variant="outlined"
+        variant="contained"
         disableElevation
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
+        sx={{ px: 5 }}
       >
-        Categories
+        Shop By Category
       </Button>
       <Menu
         id="fade-menu"
@@ -79,6 +84,6 @@ export default function CategoryMenu() {
           );
         })}
       </Menu>
-    </div>
+    </Box>
   );
 }

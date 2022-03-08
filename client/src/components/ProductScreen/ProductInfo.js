@@ -15,6 +15,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
 
+////////////////////////////////////
+// Redux Related
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../app/features/cart/cart-actions";
+
 /////////////////////////////////////
 // Custom Components
 import CustomizedGrid from "../Grid/CustomizedGrid";
@@ -30,11 +35,25 @@ const ProductImage = styled.img`
   height: 500px;
 `;
 
-const ProductInfo = (props) => {
-  const { name, price, imagePath, rating, numReviews, countInStock } =
-    props.productDetails;
+const ProductInfo = ({ productDetails, category, setQty, qty }) => {
+  const {
+    product_id,
+    name,
+    price,
+    imagePath,
+    rating,
+    numReviews,
+    countInStock,
+  } = productDetails;
 
-  const { category_id, name: category_name } = props.category;
+  const { category_id, name: category_name } = category;
+
+  const dispatch = useDispatch();
+  const addToCartHandler = () => {
+    dispatch(
+      addToCart({ product_id, name, imagePath, price, countInStock, qty })
+    );
+  };
 
   return (
     <CustomizedGrid
@@ -81,7 +100,7 @@ const ProductInfo = (props) => {
                 underline="none"
                 color="inherit"
                 component={RouterLink}
-                to={`/categories/${category_id}`}
+                to={`/category/${category_id}`}
               >
                 <Chip label={category_name} clickable />
               </Link>
@@ -126,13 +145,10 @@ const ProductInfo = (props) => {
               <Typography>Quantity:</Typography>
               <FormControl>
                 <Select
-                  value={props.qty}
-                  onChange={(event) => props.setQty(event.target.value)}
+                  value={qty}
+                  onChange={(event) => setQty(event.target.value)}
                   size="small"
                 >
-                  {/* <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem> */}
                   {[...Array(countInStock).keys()].map((val) => (
                     <MenuItem value={val + 1} key={val + 1}>
                       {val + 1}
@@ -153,6 +169,7 @@ const ProductInfo = (props) => {
                 py: 1,
                 display: `${countInStock === 0 ? "none" : "auto"}`,
               }}
+              onClick={addToCartHandler}
             >
               Add to Cart
             </Button>

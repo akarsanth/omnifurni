@@ -55,19 +55,21 @@ const LoginScreen = () => {
   };
 
   // login state handling with redux
-  const { isLoading, error, message, isAuthenticated } = useSelector(
+  const { isLoading, error, message, isAuthenticated, userInfo } = useSelector(
     (state) => state.authUser
   );
 
+  // After successful authentication and fetching of user info
   useEffect(() => {
-    if (isAuthenticated) {
+    if (userInfo) {
       if (location.state?.from) {
+        console.log(location.state.from);
         navigate(location.state.from);
       } else {
         navigate("/");
       }
     }
-  }, [isAuthenticated, navigate, location.state?.from]);
+  }, [userInfo, navigate, location.state?.from]);
 
   // login submit handler
   const submitHandler = (values, { resetForm }) => {

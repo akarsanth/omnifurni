@@ -39,16 +39,12 @@ const ForgotPassword = () => {
 
   // Submit handler
   const submitHandler = async (values, { resetForm }) => {
-    // Resetting form fields
-    resetForm({
-      values: "",
-    });
-
     const { email } = values;
     try {
       // before request
       setState({ ...state, isLoading: true });
-      const res = await axios.post("/api/v1/auth/forgot", { email });
+
+      const res = await axios.post("/api/v1/user/forgot", { email });
 
       // visualization of isLoading
       // setTimeout(() => {
@@ -74,6 +70,11 @@ const ForgotPassword = () => {
         success: null,
       });
     }
+
+    // Resetting form fields
+    resetForm({
+      values: "",
+    });
   };
 
   return (

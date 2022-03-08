@@ -5,6 +5,7 @@ import { SocialIcon } from "react-social-icons";
 
 ///////////////////////////////////
 // Components
+import Subscribe from "./Subscribe";
 
 ///////////////////////////////////
 // MUI imports
@@ -76,6 +77,7 @@ const Footer = () => {
     <Box sx={{ mt: "auto" }}>
       <MainFooter>
         <Container sx={{ flexGrow: 1 }}>
+          <Subscribe />
           <Grid
             container
             // sx={{
