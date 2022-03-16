@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 //////////////////////////////////
 // Redux Related
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCartData } from "../../app/features/cart/cart-actions";
 import { getCategoryList } from "../../app/features/category/category-actions";
+import { logout } from "../../app/features/authUser/authUser-actions";
 
 /////////////////////////////////
 // Components
@@ -27,9 +28,16 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Badge from "@mui/material/Badge";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import Link from "@mui/material/Link";
-// import { SwipeableDrawer } from "@mui/material";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Collapse from "@mui/material/Collapse";
 
 // navbar logo
 import logo from "../../assets/omnifurni.png";
@@ -38,6 +46,7 @@ import logo from "../../assets/omnifurni.png";
 // Styled Components
 import { styled } from "@mui/material/styles";
 import AdminMenu from "./AdminMenu";
+import { categoryListSuccess } from "../../app/features/category/categoryList-slice";
 
 const BrandLogo = styled("img")`
   height: 50px;
@@ -62,9 +71,15 @@ const NavBar = styled(AppBar)({
   boxShadow: "0 2px 4px rgb(0 0 0 / 8%), 0 4px 12px rgb(0 0 0 / 8%)",
 });
 
+const ListItemBtn = styled(ListItemButton)(({ theme }) => ({
+  borderTop: `1px solid ${theme.palette.grey[200]}`,
+  borderBottom: `1px solid ${theme.palette.grey[200]}`,
+}));
+
 /////////////////////////////////
 // Header Component
 const Header = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { isAuthenticated, userInfo } = useSelector((state) => state.authUser);
@@ -72,6 +87,9 @@ const Header = () => {
   const { totalQuantity } = useSelector((state) => state.cart);
 
   const { token } = useSelector((state) => state.token);
+
+  // For category menu
+  const { categories } = useSelector((state) => state.categoryList);
 
   // To fetch cart
   // useEffect(() => {
@@ -92,17 +110,31 @@ const Header = () => {
   }, [dispatch]);
 
   // Drawer
-  const [state, setState] = React.useState(false);
+  const [drawerState, setDrawerState] = React.useState(false);
 
   const toggleDrawer = (value) => (event) => {
     if (
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
     ) {
+      console.log("inside if");
       return;
     }
 
-    setState(value);
+    setDrawerState(value);
+  };
+
+  // To handle side drawer links
+  const handleListItemClick = (path) => {
+    navigate(path);
+    setDrawerState(false);
+  };
+
+  // Side drawer category nested list
+  const [open, setOpen] = React.useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
   };
 
   return (
@@ -129,6 +161,7 @@ const Header = () => {
               },
             }}
           >
+            {/* Menu Icon */}
             <IconButton
               size="large"
               edge="start"
@@ -141,13 +174,81 @@ const Header = () => {
 
             {/* Drawer */}
             <Drawer
-              sx={{ width: 250 }}
-              open={state}
+              sx={{
+                width: 260,
+                flexShrink: 0,
+                "& .MuiDrawer-paper": {
+                  width: 260,
+                  boxSizing: "border-box",
+                },
+              }}
+              open={drawerState}
               onClose={toggleDrawer(false)}
             >
-              Helo
+              <List>
+                <ListItem sx={{ height: 100 }}>
+                  {/* <ListItemText primary="Home" /> */}
+                  <DesktopSearchBar
+                    mobile={true}
+                    setDrawerState={setDrawerState}
+                  />
+                </ListItem>
+
+                <ListItemBtn onClick={() => handleListItemClick("/")}>
+                  <ListItemText primary="Home" />
+                </ListItemBtn>
+
+                {/* Category nested list */}
+                <ListItemButton onClick={handleClick}>
+                  <ListItemText primary="Categories" />
+                  {open ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {categories.map(({ category_id, name }) => (
+                      <ListItemBtn
+                        sx={{ ml: 4 }}
+                        onClick={() =>
+                          handleListItemClick(`/category/${category_id}`)
+                        }
+                        key={category_id}
+                      >
+                        <ListItemText primary={name} />
+                      </ListItemBtn>
+                    ))}
+                  </List>
+                </Collapse>
+
+                <ListItemBtn onClick={() => handleListItemClick("/contact")}>
+                  <ListItemText primary="Contact Us" />
+                </ListItemBtn>
+
+                {isAuthenticated && (
+                  <ListItemBtn onClick={() => dispatch(logout())}>
+                    <ListItemIcon>
+                      <LogoutIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Logout" />
+                  </ListItemBtn>
+                )}
+
+                {!isAuthenticated && (
+                  <>
+                    <ListItemBtn onClick={() => handleListItemClick("/login")}>
+                      <ListItemText primary="Login" />
+                    </ListItemBtn>
+
+                    <ListItemBtn
+                      onClick={() => handleListItemClick("/register")}
+                    >
+                      <ListItemText primary="Register" />
+                    </ListItemBtn>
+                  </>
+                )}
+              </List>
             </Drawer>
 
+            {/* Logo Box */}
             <LogoBox>
               <Link to="/" component={RouterLink}>
                 <BrandLogo src={logo} alt="brand logo" />
@@ -156,7 +257,20 @@ const Header = () => {
 
             <CategoryMenu />
 
-            <DesktopSearchBar />
+            <Box
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "flex",
+                },
+
+                flexGrow: {
+                  md: 1,
+                },
+              }}
+            >
+              <DesktopSearchBar />
+            </Box>
 
             <HeaderRight>
               {/* search icon for mobile view */}

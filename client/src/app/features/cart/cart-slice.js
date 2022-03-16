@@ -9,6 +9,8 @@ const cartSlice = createSlice({
     cartItems: [],
     totalQuantity: 0,
     total: 0,
+    shippingAddress: null,
+    paymentMethod: "",
   },
 
   reducers: {
@@ -108,6 +110,24 @@ const cartSlice = createSlice({
         0
       );
     },
+
+    clearCartItems(state) {
+      state.cartItems = [];
+      state.totalQuantity = 0;
+      state.total = 0;
+    },
+
+    clearShippingAddress(state) {
+      state.shippingAddress = null;
+    },
+
+    saveShippingAddress(state, action) {
+      state.shippingAddress = action.payload;
+    },
+
+    savePaymentMethod(state, action) {
+      state.paymentMethod = action.payload;
+    },
   },
 });
 
@@ -116,6 +136,10 @@ export const {
   addItemToCart,
   removeItemFromCart,
   updateItemQuantity,
+  clearCartItems,
+  clearShippingAddress,
+  savePaymentMethod,
+  saveShippingAddress,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

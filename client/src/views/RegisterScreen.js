@@ -17,7 +17,10 @@ import {
 
 //////////////////////////////////
 // Component Import
-import FormContainer, { FormLink } from "../components/FormsUI/FormContainer";
+import FormContainer, {
+  FormLink,
+  NameFields,
+} from "../components/FormsUI/FormContainer";
 import FormFields from "../components/FormsUI/FormFieldsWrapper";
 import Textfield from "../components/FormsUI/Textfield";
 import Button from "../components/FormsUI/Button";
@@ -32,15 +35,6 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-
-/////////////////////////////////
-// Styled Components
-import { styled } from "@mui/material/styles";
-
-const NameFields = styled(Box)(({ theme }) => ({
-  display: "flex",
-  gap: theme.spacing(3),
-}));
 
 /////////////////////////////////////////
 // MAIN Component

@@ -22,7 +22,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer.js";
 import HomeScreen from "./views/HomeScreen";
-import CartScreen from "./views/CartScreen";
 import LoginScreen from "./views/LoginScreen";
 import RegisterScreen from "./views/RegisterScreen";
 import ActivationEmail from "./views/ActivationEmail";
@@ -35,6 +34,12 @@ import AboutScreen from "./views/InfoScreens/AboutScreen";
 import FAQScreen from "./views/InfoScreens/FAQScreen";
 import PrivacyScreen from "./views/InfoScreens/PrivacyPolicyScreen";
 import SearchScreen from "./views/SearchScreen";
+
+// Cart
+import CartScreen from "./views/CartScreen";
+import CheckoutScreen from "./views/CheckoutScreen";
+import PaymentScreen from "./views/PaymentScreen";
+import OrderCompleteScreen from "./views/OrderCompleteScreen";
 
 // Account Screen
 import AccountScreen from "./views/AccountScreen";
@@ -58,7 +63,7 @@ import { CssBaseline } from "@mui/material";
 //////////////////////////////////////////
 // Component Import
 import Message from "./components/Message";
-import CheckoutScreen from "./views/CheckoutScreen";
+import ViewOrder from "./components/Account/ViewOrder";
 
 const theme = createTheme({
   palette: {
@@ -164,12 +169,18 @@ function App() {
               <Route element={<ProtectedRoutes />}>
                 <Route path="/cart" element={<CartScreen />} />
                 <Route path="/checkout" element={<CheckoutScreen />} />
+                <Route path="/payment" element={<PaymentScreen />} />
+                <Route
+                  path="/ordercomplete"
+                  element={<OrderCompleteScreen />}
+                />
 
                 {/* Account Screen */}
                 <Route path="/account" element={<AccountScreen />}>
                   <Route path="dashboard" element={<AccountDashboard />} />
                   <Route path="address" element={<Address />} />
                   <Route path="orders" element={<Orders />} />
+                  <Route path="vieworder/:id" element={<ViewOrder />} />
                   <Route path="details" element={<AccountDetails />} />
                 </Route>
 

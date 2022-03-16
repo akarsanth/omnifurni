@@ -12,15 +12,15 @@ import Link from "@mui/material/Link";
 // Styled Components
 import { styled } from "@mui/material/styles";
 
-const ButtonsBox = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down("sm")]: {
-    display: "none",
-  },
-}));
+// const ButtonsBox = styled(Box)(({ theme }) => ({
+//   [theme.breakpoints.down("sm")]: {
+//     display: "none",
+//   },
+// }));
 
 const HeaderButtons = () => {
   return (
-    <ButtonsBox sx={{ display: "flex", gap: 2 }}>
+    <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2 }}>
       <Link to="login" component={RouterLink} underline="none">
         <Button variant="outlined">Login</Button>
       </Link>
@@ -29,7 +29,7 @@ const HeaderButtons = () => {
           Register
         </Button>
       </Link>
-    </ButtonsBox>
+    </Box>
   );
 };
 

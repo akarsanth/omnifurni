@@ -30,9 +30,9 @@ const Search = styled("div")(({ theme }) => ({
     flexGrow: 1,
   },
 
-  [theme.breakpoints.down("md")]: {
-    display: "none",
-  },
+  // [theme.breakpoints.down("md")]: {
+  //   display: "none",
+  // },
   overflow: "hidden",
 }));
 
@@ -73,7 +73,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 // Search Component
 ////////////////////////////////////////////////
-const DesktopSearchBar = () => {
+const DesktopSearchBar = ({ mobile, setDrawerState }) => {
   const navigate = useNavigate();
 
   const [searchText, setSearchText] = useState("");
@@ -86,12 +86,17 @@ const DesktopSearchBar = () => {
     navigate(`/search/?q=${searchText.trim()}`);
 
     setSearchText("");
+
+    if (mobile) {
+      console.log("hello");
+      setDrawerState(false);
+    }
   };
   return (
     <Search>
       <Form onSubmit={searchHandler} noValidate autoComplete="off">
         <SearchIconButton disabled={!searchText}>
-          <SearchIcon />
+          <SearchIcon onClick={searchHandler} />
         </SearchIconButton>
         <StyledInputBase
           placeholder="Search products...."

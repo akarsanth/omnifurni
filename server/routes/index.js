@@ -14,6 +14,6 @@ router.use("/products", productRoutes);
 router.use("/categories", categoryRoutes);
 router.use("/cart", cartRoutes);
 router.use("/upload", uploadRoutes);
-router.use("/order", orderRoutes);
+router.use("/orders", orderRoutes);
 
 export default router;

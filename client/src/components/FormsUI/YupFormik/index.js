@@ -174,3 +174,27 @@ export const CONTACT_FORM_VALIDATION = Yup.object().shape({
     .max(10, "Must be exactly 10 digits"),
   message: Yup.string().required("Message is a required Field"),
 });
+
+/////////////////////////////////////////
+// Shipping Address form (Checkout screen)
+
+export const SHIPPING_ADDRESS_VALIDATION = Yup.object().shape({
+  firstName: Yup.string().required("First Name is a required Field"),
+  lastName: Yup.string().required("Last Name is a required Field"),
+  email: Yup.string()
+    .required("Email is a required Field")
+    .email("Invalid email address"),
+  city: Yup.string().required("City is a required Field"),
+  postalCode: Yup.string()
+    .required("Zip / Postal Code is a required field")
+    .matches(/^[0-9]+$/, "Must be only digits")
+    .min(5, "Must be exactly 5 digits")
+    .max(5, "Must be exactly 5 digits"),
+  contactNumber: Yup.string()
+    .required("Contact Number is a required field")
+    .matches(/^[0-9]+$/, "Must be only digits")
+    .min(10, "Must be exactly 10 digits")
+    .max(10, "Must be exactly 10 digits"),
+  streetAddress: Yup.string().required("Street Address is a required Field"),
+  province: Yup.string().required("Province is a required Field"),
+});

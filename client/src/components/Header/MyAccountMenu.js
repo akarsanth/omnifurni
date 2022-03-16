@@ -17,6 +17,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import Logout from "@mui/icons-material/Logout";
 import Link from "@mui/material/Link";
+import Box from "@mui/material/Box";
 
 const MyAccountMenu = () => {
   const dispatch = useDispatch();
@@ -30,13 +31,15 @@ const MyAccountMenu = () => {
     setAnchorEl(null);
   };
 
-  // logout handler
-  const logoutHandler = (e) => {
-    dispatch(logout());
-  };
-
   return (
-    <div>
+    <Box
+      sx={{
+        display: {
+          xs: "none",
+          sm: "block",
+        },
+      }}
+    >
       <Button
         id="fade-button"
         aria-controls="fade-menu"
@@ -78,14 +81,14 @@ const MyAccountMenu = () => {
           </Link>
         </MenuItem>
         {/* <Divider /> */}
-        <MenuItem onClick={logoutHandler}>
+        <MenuItem onClick={() => dispatch(logout())}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
-    </div>
+    </Box>
   );
 };
 

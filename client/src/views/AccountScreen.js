@@ -32,14 +32,14 @@ import CustomizedGrid from "../components/Grid/CustomizedGrid";
 import { styled } from "@mui/material/styles";
 
 const AccountScreenHeader = styled(Box)(({ theme }) => ({
-  height: 140,
+  height: 120,
   backgroundColor: theme.palette.secondary.main,
   display: "flex",
   alignItems: "flex-end",
   justifyContent: "center",
   padding: `${theme.spacing(3)} 0`,
   textAlign: "center",
-  marginBottom: theme.spacing(8),
+  marginBottom: theme.spacing(5),
 }));
 
 // const indexText = ["Dashboard", "Orders", "Address", "Account Details"];
@@ -63,6 +63,11 @@ const locationList = {
     index: 3,
     text: "Account Details",
   },
+
+  vieworder: {
+    index: 4,
+    text: "View Order",
+  },
 };
 
 //////////////////////////////////////////
@@ -78,6 +83,7 @@ const AccountScreen = () => {
   useEffect(() => {
     // getting the current path from the url
     const list = location.pathname.split("/")[2];
+    console.log(list);
 
     if (list) {
       setSelectedList(locationList[list].text);
@@ -116,7 +122,7 @@ const AccountScreen = () => {
           columns={{ xs: 1, md: 2 }}
           sx={{ mb: 8, mt: 0 }}
         >
-          <Grid item xs={1} md={0.5}>
+          <Grid item xs={1} md={0.5} sx={{ mb: 3 }}>
             <Box sx={{ bgcolor: "#fff", border: 2, borderColor: "#eee" }}>
               <List
                 component="nav"
@@ -142,7 +148,7 @@ const AccountScreen = () => {
                   underline="none"
                 >
                   <ListItemButton
-                    selected={selectedIndex === 1}
+                    selected={selectedIndex === 1 || selectedIndex === 4}
                     // onClick={(event) => handleListItemClick(event, 1)}
                   >
                     <ListItemText primary="Orders" />

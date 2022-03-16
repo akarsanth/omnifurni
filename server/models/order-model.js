@@ -21,7 +21,7 @@ export default (sequelize, Sequelize) => {
       },
 
       paid_at: {
-        type: DataTypes.TIME,
+        type: DataTypes.DATE,
       },
 
       is_delivered: {
@@ -30,12 +30,15 @@ export default (sequelize, Sequelize) => {
       },
 
       delivered_at: {
-        type: DataTypes.TIME,
+        type: DataTypes.DATE,
       },
 
       payment_method: {
         type: DataTypes.STRING,
-        allowNull: false,
+      },
+
+      status: {
+        type: DataTypes.STRING,
       },
     },
 

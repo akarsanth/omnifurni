@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 // MUI import
 import Link from "@mui/material/Link";
 import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 
 /////////////////////////////////
 // Styled Components
@@ -15,6 +16,11 @@ export const FormLink = styled(Link)(({ theme }) => ({
   },
 }));
 
+export const NameFields = styled(Box)(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(3),
+}));
+
 const FormContainer = ({ children }) => {
   return (
     <Container>
@@ -22,7 +28,7 @@ const FormContainer = ({ children }) => {
         container
         justifyContent="center"
         alignItems="center"
-        sx={{ mt: 10, mb: 10 }}
+        sx={{ mt: 8, mb: 10 }}
       >
         <Grid
           item

@@ -6,8 +6,9 @@ import { Link as RouterLink } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import { styled } from "@mui/system";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+
+import { styled } from "@mui/system";
 
 const StepText = styled(Typography)(({ theme }) => ({
   fontWeight: theme.typography.fontWeightLight,
@@ -45,7 +46,9 @@ const ForwardArrowIcon = styled(ArrowForwardIosIcon)(({ theme }) => ({
   color: theme.palette.grey[500],
 }));
 
-const CheckoutSteps = ({ step1, step2, step3 }) => {
+/////////////////////////////////////////
+// MAIN Component
+const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
   return (
     <StepBox>
       <StepBoxItem>
@@ -62,7 +65,7 @@ const CheckoutSteps = ({ step1, step2, step3 }) => {
 
       <StepBoxItem>
         {step2 ? (
-          <Link to="/check" component={RouterLink} underline="none">
+          <Link to="/checkout" component={RouterLink} underline="none">
             <ActiveStepText variant="h6">Checkout Details</ActiveStepText>
           </Link>
         ) : (
@@ -74,9 +77,17 @@ const CheckoutSteps = ({ step1, step2, step3 }) => {
 
       <StepBoxItem>
         {step3 ? (
-          <Link to="/cart" component={RouterLink} underline="none">
-            <ActiveStepText variant="h6">Order Complete</ActiveStepText>
-          </Link>
+          <ActiveStepText variant="h6">Payment</ActiveStepText>
+        ) : (
+          <StepText variant="h6">Payment</StepText>
+        )}
+
+        <ForwardArrowIcon fontSize="small" />
+      </StepBoxItem>
+
+      <StepBoxItem>
+        {step4 ? (
+          <ActiveStepText variant="h6">Order Complete</ActiveStepText>
         ) : (
           <StepText variant="h6">Order Complete</StepText>
         )}

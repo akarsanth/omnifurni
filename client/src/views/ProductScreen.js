@@ -25,7 +25,7 @@ const initialState = {
   error: null,
 };
 
-const productDetailsReducer = (state, action) => {
+const reducer = (state, action) => {
   switch (action.type) {
     case "PRODUCT_DETAILS_REQUEST":
       return { ...state, isLoading: true };
@@ -41,12 +41,14 @@ const productDetailsReducer = (state, action) => {
   }
 };
 
+/////////////////////////////////////
+// MAIN COMPONENT
 const ProductScreen = () => {
   const [qty, setQty] = useState(1);
 
   const params = useParams();
   // reducers
-  const [state, dispatch] = useReducer(productDetailsReducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const { isLoading, product, error } = state;
   const { category, reviews, ...productDetails } = product;
 

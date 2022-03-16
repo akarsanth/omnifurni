@@ -4,6 +4,26 @@ export default (sequelize, Sequelize) => {
   const ShippingAddress = sequelize.define(
     "shipping_address",
     {
+      first_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      last_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      contact_number: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
       shipping_address_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
