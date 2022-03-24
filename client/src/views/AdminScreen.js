@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import {
   Link as RouterLink,
@@ -77,6 +78,14 @@ const AdminScreen = () => {
       navigate("/admin/dashboard");
     }
   }, [location.pathname, navigate]);
+
+  // To check if user is admin or not
+  const { userInfo } = useSelector((state) => state.authUser);
+  useEffect(() => {
+    if (userInfo && userInfo.isAdmin === false) {
+      navigate("/");
+    }
+  }, [userInfo, navigate]);
 
   return (
     <Box>
@@ -164,7 +173,7 @@ const AdminScreen = () => {
             bgcolor: "#fff",
             border: 2,
             borderColor: "#eee",
-            p: 2,
+            p: 3,
             pb: 6,
             height: "100%",
             mb: 8,

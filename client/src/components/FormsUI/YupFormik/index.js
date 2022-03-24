@@ -127,6 +127,7 @@ export const ADDRESS_ADD_EDIT_VALIDATION = Yup.object().shape({
 export const USER_DETAILS_VALIDATION = Yup.object().shape({
   firstName: Yup.string().required("First name is a required Field"),
   lastName: Yup.string().required("Last Name is a required Field"),
+  role: Yup.boolean(),
 });
 
 // Category Add/Edit Form validation
@@ -151,6 +152,13 @@ export const PRODUCT_ADD_EDIT_VALIDATION = Yup.object().shape({
     .positive()
     .integer(),
   category: Yup.string().required("Category is a required Field"),
+  featured: Yup.boolean(),
+});
+
+// Order Edit Form Validation
+export const ORDER_EDIT_VALIDATION = Yup.object().shape({
+  paid: Yup.boolean(),
+  delivered: Yup.boolean(),
 });
 
 /////////////////////////////////////////

@@ -1,10 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useReducer } from "react";
-import {
-  Link as RouterLink,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 /////////////////////////////////////
@@ -14,10 +10,8 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-// import FormLabel from "@mui/material/FormLabel";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
@@ -27,13 +21,14 @@ import Typography from "@mui/material/Typography";
 // Custom Components
 import CheckoutSteps from "../components/CheckoutSteps";
 import FormContainer from "../components/FormsUI/FormContainer";
+import Payment from "../components/PaymentScreen/Payment";
 
 //////////////////////////////////
 // Reducer
 // For order details
 const initialState = {
   isLoading: false,
-  order: { products: [], shipping_address: {} },
+  order: { products: [], shipping_address: {}, payment_method: "" },
   error: null,
 };
 
@@ -53,33 +48,9 @@ const reducer = (state, action) => {
   }
 };
 
-// For Payment
-const paymentInitialState = {
-  isLoading: false,
-  success: null,
-  error: null,
-};
-
-const paymentReducer = (state, action) => {
-  switch (action.type) {
-    case "ORDER_PAY_REQUEST":
-      return { ...state, isLoading: true };
-
-    case "ORDER_PAY_SUCCESS":
-      return { ...state, isLoading: false, success: true };
-
-    case "ORDER_PAY_FAIL":
-      return { ...state, isLoading: false, error: action.payload };
-
-    default:
-      return state;
-  }
-};
-
-//////////////////////////////
+///////////////////////////////////
 // MAIN Component
 const PaymentScreen = () => {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const orderId = searchParams.get("orderId");
 
@@ -87,13 +58,6 @@ const PaymentScreen = () => {
   // To check if it is value orderId
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isLoading, order, error } = state;
-
-  // Payment Reducer
-  const [paymentState, dispatchPayment] = useReducer(
-    paymentReducer,
-    paymentInitialState
-  );
-  const { isLoading: loadingPay, success, error: errorPay } = paymentState;
 
   const { token } = useSelector((state) => state.token);
   useEffect(() => {
@@ -131,58 +95,15 @@ const PaymentScreen = () => {
     setValue(event.target.value);
   };
 
-  const codPaymentHandler = async () => {
-    const paymentDetails = {
-      payment_method: "COD",
-    };
-
-    try {
-      dispatchPayment({
-        type: "ORDER_PAY_REQUEST",
-      });
-
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const { data } = await axios.put(
-        `/api/v1/orders/${orderId}/pay`,
-        paymentDetails,
-        config
-      );
-
-      dispatchPayment({
-        type: "ORDER_PAY_SUCCESS",
-      });
-    } catch (error) {
-      dispatchPayment({
-        type: "ORDER_PAY_FAIL",
-        payload:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      });
-    }
-  };
-
-  // After success payment
-  useEffect(() => {
-    if (success) {
-      navigate("/ordercomplete", {
-        replace: true,
-        state: { from: "payment", orderId: orderId },
-      });
-    }
-  }, [success, navigate, orderId]);
-
   return (
     <Container>
       <CheckoutSteps step3 />
 
-      {isLoading && <CircularProgress />}
+      {isLoading && (
+        <Box sx={{ my: 10, display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
+      )}
       {error && (
         <Alert severity="error" sx={{ mt: 3, mb: 10 }}>
           {error}
@@ -191,12 +112,11 @@ const PaymentScreen = () => {
 
       {!error && (
         <>
-          {order.payment_method === null ? (
+          {order.payment_method === "" ? (
+            <></>
+          ) : order.payment_method === null ? (
             <FormContainer>
               <FormControl>
-                {/* <FormLabel id="demo-controlled-radio-buttons-group">
-            Pay with
-          </FormLabel> */}
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Pay with
                 </Typography>
@@ -219,27 +139,12 @@ const PaymentScreen = () => {
                 </RadioGroup>
               </FormControl>
 
-              {/* Button for COD Payment */}
-              {value === "cod" && (
-                <Button
-                  color="secondary"
-                  endIcon={<KeyboardArrowRightIcon />}
-                  disableElevation
-                  // loading={loadingPay}
-                  variant="contained"
-                  sx={{ mt: 3 }}
-                  fullWidth
-                  onClick={codPaymentHandler}
-                >
-                  Proceed to Payment
-                </Button>
-              )}
-
-              {errorPay && (
-                <Alert severity="error" sx={{ mt: 3, mb: 4 }}>
-                  {errorPay}
-                </Alert>
-              )}
+              {/* here */}
+              <Payment
+                value={value}
+                orderId={orderId}
+                amount={order.total_amount}
+              />
             </FormContainer>
           ) : (
             <Box sx={{ mt: 5, mb: 10 }}>

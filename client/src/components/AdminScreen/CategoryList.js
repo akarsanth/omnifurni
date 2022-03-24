@@ -93,7 +93,7 @@ const CategoryList = () => {
   const { token } = useSelector((state) => state.token);
   const [deleteState, setDeleteState] = useState({
     continueDeleting: false,
-    deletingCategory: "",
+    deletingCategory: {},
   });
 
   // Dialog Modal
@@ -110,17 +110,17 @@ const CategoryList = () => {
     setOpenDialog(false);
   };
 
-  const handleDelete = async (categoryId) => {
+  const handleDelete = async (category) => {
     setDeleteState({
       continueDeleting: false,
-      deletingCategory: categoryId,
+      deletingCategory: category,
     });
 
     handleOpenDialog();
   };
 
   useEffect(() => {
-    const deleteCategory = async (categoryId) => {
+    const deleteCategory = async ({ category_id, imagePath }) => {
       try {
         setError("");
 
@@ -131,14 +131,20 @@ const CategoryList = () => {
           },
         };
         const { data } = await axios.delete(
-          `/api/v1/categories/${categoryId}`,
+          `/api/v1/categories/${category_id}`,
           config
         );
+
+        console.log(imagePath);
+        // To delete image
+        await axios.post("/api/v1/upload/delete", {
+          imagePath,
+        });
 
         // To display message
         dispatchRedux(updateSuccessMessage(data.message));
         // To remove the deleted category from state
-        dispatchRedux(categoryDeleted(categoryId));
+        dispatchRedux(categoryDeleted(category_id));
       } catch (error) {
         setError(
           error.response && error.response.data.message
@@ -147,7 +153,7 @@ const CategoryList = () => {
         );
       }
     };
-    if (deleteState.deletingCategory && deleteState.continueDeleting) {
+    if (deleteState.deletingCategory !== {} && deleteState.continueDeleting) {
       deleteCategory(deleteState.deletingCategory);
     }
   }, [deleteState, dispatchRedux, token]);
@@ -205,7 +211,7 @@ const CategoryList = () => {
           {
             icon: tableIcons.Delete,
             tooltip: "Delete Category",
-            onClick: (event, rowData) => handleDelete(rowData.category_id),
+            onClick: (event, rowData) => handleDelete(rowData),
           },
         ]}
       />

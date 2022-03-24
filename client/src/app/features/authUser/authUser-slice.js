@@ -4,7 +4,7 @@ const initialState = {
   isLoading: false,
   error: null,
   message: null,
-  isAuthenticated: false,
+  isAuthenticated: null,
   userInfo: null,
 };
 
@@ -65,6 +65,7 @@ export const {
   updateUserInfo,
   addAddress,
   editAddress,
+  setIsLoginRequired,
 } = authUserSlice.actions;
 
 export default authUserSlice.reducer;

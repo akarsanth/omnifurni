@@ -71,6 +71,9 @@ const UserEditModal = (props) => {
     const lastName = values.lastName;
     const role = values.role ? 1 : 0;
 
+    console.log(role);
+    console.log(values.role);
+
     const details = { firstName, lastName, role };
 
     try {
@@ -121,6 +124,7 @@ const UserEditModal = (props) => {
           initialValues={{
             firstName: rowData.first_name,
             lastName: rowData.last_name,
+            role: rowData.role === 1 ? true : false,
           }}
           validationSchema={USER_DETAILS_VALIDATION}
           onSubmit={saveChangesHandler}

@@ -1,8 +1,11 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, Navigate, Outlet } from "react-router-dom";
 
+// import WaitPage from "./components/WaitPage";
+
 const useAuth = () => {
-  const { isAuthenticated } = useSelector((state) => state.authUser);
+  const { isAuthenticated, useInfo } = useSelector((state) => state.authUser);
 
   return isAuthenticated;
 };

@@ -119,8 +119,9 @@ const Orders = () => {
                   </TableCell>
                   <TableCell>DATE</TableCell>
                   <TableCell>TOTAL</TableCell>
-                  <TableCell>PAID</TableCell>
-                  <TableCell>DELIVERED</TableCell>
+                  <TableCell>STATUS</TableCell>
+                  {/* <TableCell>PAID</TableCell>
+                  <TableCell>DELIVERED</TableCell> */}
                   <TableCell sx={{ pr: 0 }}>ACTION</TableCell>
                 </TableRow>
               </TableHead>
@@ -139,6 +140,10 @@ const Orders = () => {
                     <TableCell>{order.createdAt.substring(0, 10)}</TableCell>
                     <TableCell>{`NPR ${order.total_amount}`}</TableCell>
                     <TableCell>
+                      <Chip label={order.status} />
+                    </TableCell>
+
+                    {/* <TableCell>
                       <Box
                         sx={{ display: "flex", gap: 1, alignItems: "center" }}
                       >
@@ -159,7 +164,7 @@ const Orders = () => {
                       ) : (
                         <CloseIcon sx={{ color: "error.main" }} />
                       )}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell sx={{ display: "flex", gap: 0.5, pr: 0 }}>
                       <Link
                         to={`/account/vieworder/${order.order_id}`}

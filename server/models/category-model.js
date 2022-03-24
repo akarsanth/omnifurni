@@ -11,12 +11,12 @@ export default (sequelize, Sequelize) => {
       },
 
       imagePath: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
 
       name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(75),
         allowNull: false,
       },
 

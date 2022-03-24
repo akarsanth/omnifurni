@@ -78,76 +78,68 @@ const ProductAddEditModal = (props) => {
   // For File Upload
   const [imagePath, setImagePath] = useState("");
   const [uploadError, setUploadError] = useState(false);
-  const [uploading, setUploading] = useState(false);
   useEffect(() => {
     if (rowData.imagePath) {
       setImagePath(rowData.imagePath);
     }
   }, [rowData]);
-  const fileSelectedHandler = async (event) => {
-    // Resetting error state
-    setUploadError(false);
-    // Resetting image path state
-    setImagePath("");
-
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append("image", file);
-    setUploading(true);
-
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-      const { data } = await axios.post("/api/v1/upload", formData, config);
-
-      setImagePath(data);
-    } catch (error) {
-      setUploading(false);
-      dispatch({
-        type: "FAIL",
-        payload: error,
-      });
-    }
-  };
-  useEffect(() => {
-    if (imagePath) {
-      setUploading(false);
-    }
-  }, [imagePath]);
 
   // Button handlers
   const dispatchRedux = useDispatch();
   const { token } = useSelector((state) => state.token);
 
+  // To handle product edit
   const handleProductEdit = async (values) => {
     if (!imagePath) {
       setUploadError(true);
       return;
     }
 
-    // Values
-    const productId = rowData.product_id;
-    const name = values.name;
-    const description = values.description;
-    const price = values.price;
-    const countInStock = values.countInStock;
-    const category_id = values.category;
-    const featured = values.featured ? 1 : 0;
-
-    const details = {
-      name,
-      description,
-      price,
-      countInStock,
-      category_id,
-      featured,
-      imagePath,
-    };
-
     try {
+      // Checking if new image is choosen
+      let newImagePath;
+      if (image) {
+        const formData = new FormData();
+        formData.append("image", image);
+        const configUpload = {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
+        const { data: path } = await axios.post(
+          "/api/v1/upload",
+          formData,
+          configUpload
+        );
+        newImagePath = path;
+
+        // need to delete previous image
+        const prevImagePath = rowData.imagePath;
+
+        console.log(prevImagePath);
+
+        await axios.post("/api/v1/upload/delete", { imagePath: prevImagePath });
+      }
+
+      // Values
+      const productId = rowData.product_id;
+      const name = values.name;
+      const description = values.description;
+      const price = values.price;
+      const countInStock = values.countInStock;
+      const category_id = values.category;
+      const featured = values.featured ? 1 : 0;
+
+      const details = {
+        name,
+        description,
+        price,
+        countInStock,
+        category_id,
+        featured,
+        imagePath: newImagePath ? newImagePath : rowData.imagePath,
+      };
+
       dispatch({ type: "RESET_STATE" });
 
       dispatch({ type: "REQUEST" });
@@ -185,32 +177,47 @@ const ProductAddEditModal = (props) => {
     }
   };
 
+  // To handle product att
   const handleProductAdd = async (values) => {
-    if (!imagePath) {
+    // To check if there is a image
+    if (!image) {
       setUploadError(true);
-      console.log("idar mc");
       return;
     }
 
-    // Values
-    const name = values.name;
-    const description = values.description;
-    const price = values.price;
-    const countInStock = values.countInStock;
-    const category_id = values.category;
-    const featured = values.featured ? 1 : 0;
-
-    const details = {
-      name,
-      description,
-      price,
-      countInStock,
-      category_id,
-      featured,
-      imagePath,
-    };
-
     try {
+      // upload image
+      const formData = new FormData();
+      formData.append("image", image);
+      const configUpload = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      const { data: imagePath } = await axios.post(
+        "/api/v1/upload",
+        formData,
+        configUpload
+      );
+
+      // Values
+      const name = values.name;
+      const description = values.description;
+      const price = values.price;
+      const countInStock = values.countInStock;
+      const category_id = values.category;
+      const featured = values.featured ? 1 : 0;
+
+      const details = {
+        name,
+        description,
+        price,
+        countInStock,
+        category_id,
+        featured,
+        imagePath,
+      };
+
       dispatch({ type: "RESET_STATE" });
 
       dispatch({ type: "REQUEST" });
@@ -244,6 +251,15 @@ const ProductAddEditModal = (props) => {
     }
   };
 
+  // For new image
+  const [image, setImage] = useState();
+  const handleUploadImage = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+
+    setImagePath(file.name);
+  };
+
   return (
     <>
       <ModalWrapper open={open} handleClose={handleClose}>
@@ -261,6 +277,7 @@ const ProductAddEditModal = (props) => {
                   countInStock: rowData.countInStock,
                   category: rowData.category_id,
                   imagePath,
+                  featured: rowData.featured === 1 ? true : false,
                 }
               : {
                   name: "",
@@ -269,6 +286,7 @@ const ProductAddEditModal = (props) => {
                   countInStock: "",
                   category: "",
                   imagePath,
+                  featured: false,
                 }
           }
           validationSchema={PRODUCT_ADD_EDIT_VALIDATION}
@@ -319,13 +337,12 @@ const ProductAddEditModal = (props) => {
 
                 <MUIButton variant="contained" component="label">
                   Upload
-                  <input type="file" hidden onChange={fileSelectedHandler} />
+                  <input type="file" hidden onChange={handleUploadImage} />
                 </MUIButton>
               </Box>
 
               <Checkbox
                 label="Featured?"
-                // defaultChecked={rowData.role === 0 ? false : true}
                 defaultChecked={
                   rowData.featured
                     ? rowData.featured === 0

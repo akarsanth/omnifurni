@@ -5,12 +5,12 @@ export default (sequelize, Sequelize) => {
     "shipping_address",
     {
       first_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
 
       last_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
 
@@ -31,7 +31,7 @@ export default (sequelize, Sequelize) => {
       },
 
       city: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
 
@@ -41,12 +41,12 @@ export default (sequelize, Sequelize) => {
       },
 
       street: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
 
       province: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
     },

@@ -11,7 +11,7 @@ export default (sequelize, Sequelize) => {
       },
 
       name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
 
@@ -26,7 +26,7 @@ export default (sequelize, Sequelize) => {
       },
 
       imagePath: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
 

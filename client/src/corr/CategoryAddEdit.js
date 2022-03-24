@@ -73,62 +73,64 @@ const CategotyAddEditModal = (props) => {
   // For File Upload
   const [imagePath, setImagePath] = useState("");
   const [uploadError, setUploadError] = useState(false);
-  // For edit
+  const [uploading, setUploading] = useState(false);
   useEffect(() => {
     if (rowData.imagePath) {
       setImagePath(rowData.imagePath);
     }
   }, [rowData]);
+  const fileSelectedHandler = async (event) => {
+    // Resetting error state
+    setUploadError(false);
+    // Resetting image path state
+    setImagePath("");
+
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      const { data } = await axios.post("/api/v1/upload", formData, config);
+
+      setImagePath(data);
+    } catch (error) {
+      setUploading(false);
+      dispatch({
+        type: "FAIL",
+        payload: error,
+      });
+    }
+  };
+  useEffect(() => {
+    if (imagePath) {
+      setUploading(false);
+    }
+  }, [imagePath]);
 
   // Button handlers
   const dispatchRedux = useDispatch();
   const { token } = useSelector((state) => state.token);
 
-  // Handle edit
   const handleEdit = async (values) => {
     if (!imagePath) {
       setUploadError(true);
       return;
     }
 
+    // Values
+    const categoryId = rowData.category_id;
+    const name = values.name;
+    const description = values.description;
+
+    const details = { name, description, imagePath };
+
     try {
-      // Checking if new image is choosen
-      let newImagePath;
-      if (image) {
-        const formData = new FormData();
-        formData.append("image", image);
-        const configUpload = {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        };
-        const { data: path } = await axios.post(
-          "/api/v1/upload",
-          formData,
-          configUpload
-        );
-        newImagePath = path;
-
-        // need to delete previous image
-        const prevImagePath = rowData.imagePath;
-
-        console.log(prevImagePath);
-
-        // /uploads/image-1648029171486.jpg
-
-        await axios.post("/api/v1/upload/delete", { imagePath: prevImagePath });
-      }
-
-      // Values
-      const categoryId = rowData.category_id;
-      const name = values.name;
-      const description = values.description;
-
-      const details = {
-        name,
-        description,
-        imagePath: newImagePath ? newImagePath : rowData.imagePath,
-      };
       dispatch({ type: "RESET_STATE" });
 
       dispatch({ type: "REQUEST" });
@@ -166,33 +168,19 @@ const CategotyAddEditModal = (props) => {
     }
   };
 
-  // Handle product add
   const handleAdd = async (values) => {
-    if (!image) {
+    if (!imagePath) {
       setUploadError(true);
       return;
     }
 
+    // Values
+    const name = values.name;
+    const description = values.description;
+
+    const details = { name, description, imagePath };
+
     try {
-      // upload image
-      const formData = new FormData();
-      formData.append("image", image);
-      const configUpload = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-      const { data: imagePath } = await axios.post(
-        "/api/v1/upload",
-        formData,
-        configUpload
-      );
-
-      // Values for new category
-      const name = values.name;
-      const description = values.description;
-      const details = { name, description, imagePath };
-
       dispatch({ type: "RESET_STATE" });
 
       dispatch({ type: "REQUEST" });
@@ -224,15 +212,6 @@ const CategotyAddEditModal = (props) => {
             : error.message,
       });
     }
-  };
-
-  // For new image
-  const [image, setImage] = useState();
-  const handleUploadImage = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-
-    setImagePath(file.name);
   };
 
   return (
@@ -277,22 +256,18 @@ const CategotyAddEditModal = (props) => {
                   name="imagePath"
                   label="Image"
                   required
-                  // value={image && image.name ? image.name : ""}
                   value={imagePath}
                   disabled
                   fullWidth
                   error={uploadError}
-                  helperText={uploadError && "Choose a image!"}
+                  helperText={uploadError && "Required"}
                 />
 
                 <MUIButton variant="contained" component="label">
-                  Image
-                  <input type="file" hidden onChange={handleUploadImage} />
+                  Upload
+                  <input type="file" hidden onChange={fileSelectedHandler} />
                 </MUIButton>
               </Box>
-              <Typography variant="body2">
-                Upload new image to edit the edit the image as well!
-              </Typography>
 
               <Button
                 color="secondary"
@@ -301,6 +276,7 @@ const CategotyAddEditModal = (props) => {
                 sx={{ alignSelf: "flex-start" }}
                 loading={isLoading}
                 fullWidth
+                disabled={uploading}
               >
                 {actionType === "Edit" ? "Save Changes" : "Add Category"}
               </Button>
@@ -308,11 +284,7 @@ const CategotyAddEditModal = (props) => {
           </FormikForm>
         </Formik>
 
-        {error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
-            {error}
-          </Alert>
-        )}
+        {error && <Alert sererity="error">{error}</Alert>}
       </ModalWrapper>
     </>
   );

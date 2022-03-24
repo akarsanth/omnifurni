@@ -17,7 +17,10 @@ const Dashboard = () => {
         <span style={{ fontWeight: 700 }}>{`${first_name} ${last_name}!`}</span>
       </Typography>
 
-      <Typography variant="body2">Hello world</Typography>
+      <Typography variant="body2">
+        From this admin page you can view products, categories, users, and
+        orders.
+      </Typography>
     </div>
   );
 };

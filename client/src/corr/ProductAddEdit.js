@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 /////////////////////////////////////
 // FORMIK and YUP
 import { Formik, Form as FormikForm } from "formik";
-import { CATEGORY_ADD_EDIT_VALIDATION } from "../FormsUI/YupFormik";
+import { PRODUCT_ADD_EDIT_VALIDATION } from "../FormsUI/YupFormik";
 
 ////////////////////////////////
 // MUI Components
@@ -22,6 +22,8 @@ import TextField from "@mui/material/TextField";
 import FormFields from "../FormsUI/FormFieldsWrapper";
 import Textfield from "../FormsUI/Textfield";
 import Button from "../FormsUI/Button";
+import Checkbox from "../FormsUI/Checkbox";
+import SelectWrapper from "../FormsUI/Select";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Alert from "@mui/material/Alert";
 import ModalWrapper from "../AddEditModal";
@@ -56,14 +58,17 @@ const reducer = (state, action) => {
 
 /////////////////////////////////////
 // MAIN COMPONENT
-const CategotyAddEditModal = (props) => {
+const ProductAddEditModal = (props) => {
+  // Category List Global Reducer
+  const { categories } = useSelector((state) => state.categoryList);
+
   const {
     open,
     handleClose,
     rowData,
     actionType,
-    editCateInState,
-    addCateInState,
+    editProdInState,
+    addProdInState,
   } = props;
 
   // Reducer
@@ -73,62 +78,88 @@ const CategotyAddEditModal = (props) => {
   // For File Upload
   const [imagePath, setImagePath] = useState("");
   const [uploadError, setUploadError] = useState(false);
-  // For edit
+  const [uploading, setUploading] = useState(false);
   useEffect(() => {
     if (rowData.imagePath) {
       setImagePath(rowData.imagePath);
     }
   }, [rowData]);
+  // To handle (when a new image is selected using Upload Button)
+  const fileSelectedHandler = async (event) => {
+    // Removing the previous image
+    // if (imagePath) {
+    //   const { response } = await axios.post("/api/v1/upload/delete", {
+    //     imagePath,
+    //   });
+    // }
+
+    // Resetting error state
+    setUploadError(false);
+
+    // Resetting image path state
+    setImagePath("");
+
+    const file = event.target.files[0];
+    console.log(file);
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      const { data } = await axios.post("/api/v1/upload", formData, config);
+
+      setImagePath(data);
+    } catch (error) {
+      setUploading(false);
+      dispatch({
+        type: "FAIL",
+        payload: error,
+      });
+    }
+  };
+  useEffect(() => {
+    if (imagePath) {
+      setUploading(false);
+    }
+  }, [imagePath]);
 
   // Button handlers
   const dispatchRedux = useDispatch();
   const { token } = useSelector((state) => state.token);
 
-  // Handle edit
-  const handleEdit = async (values) => {
+  // To handle product edit
+  const handleProductEdit = async (values) => {
     if (!imagePath) {
       setUploadError(true);
       return;
     }
 
+    // Values
+    const productId = rowData.product_id;
+    const name = values.name;
+    const description = values.description;
+    const price = values.price;
+    const countInStock = values.countInStock;
+    const category_id = values.category;
+    const featured = values.featured ? 1 : 0;
+
+    const details = {
+      name,
+      description,
+      price,
+      countInStock,
+      category_id,
+      featured,
+      imagePath,
+    };
+
     try {
-      // Checking if new image is choosen
-      let newImagePath;
-      if (image) {
-        const formData = new FormData();
-        formData.append("image", image);
-        const configUpload = {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        };
-        const { data: path } = await axios.post(
-          "/api/v1/upload",
-          formData,
-          configUpload
-        );
-        newImagePath = path;
-
-        // need to delete previous image
-        const prevImagePath = rowData.imagePath;
-
-        console.log(prevImagePath);
-
-        // /uploads/image-1648029171486.jpg
-
-        await axios.post("/api/v1/upload/delete", { imagePath: prevImagePath });
-      }
-
-      // Values
-      const categoryId = rowData.category_id;
-      const name = values.name;
-      const description = values.description;
-
-      const details = {
-        name,
-        description,
-        imagePath: newImagePath ? newImagePath : rowData.imagePath,
-      };
       dispatch({ type: "RESET_STATE" });
 
       dispatch({ type: "REQUEST" });
@@ -141,7 +172,7 @@ const CategotyAddEditModal = (props) => {
       };
 
       const { data } = await axios.put(
-        `/api/v1/categories/${categoryId}`,
+        `/api/v1/products/${productId}`,
         details,
         config
       );
@@ -151,7 +182,7 @@ const CategotyAddEditModal = (props) => {
       // To display message
       dispatchRedux(updateSuccessMessage(data.message));
 
-      editCateInState(data.updatedCategory);
+      editProdInState(data.updatedProduct);
 
       // To close the modal
       handleClose();
@@ -166,33 +197,33 @@ const CategotyAddEditModal = (props) => {
     }
   };
 
-  // Handle product add
-  const handleAdd = async (values) => {
-    if (!image) {
+  // To handle product att
+  const handleProductAdd = async (values) => {
+    // To check if there is a image
+    if (!imagePath) {
       setUploadError(true);
       return;
     }
 
+    // Values
+    const name = values.name;
+    const description = values.description;
+    const price = values.price;
+    const countInStock = values.countInStock;
+    const category_id = values.category;
+    const featured = values.featured ? 1 : 0;
+
+    const details = {
+      name,
+      description,
+      price,
+      countInStock,
+      category_id,
+      featured,
+      imagePath,
+    };
+
     try {
-      // upload image
-      const formData = new FormData();
-      formData.append("image", image);
-      const configUpload = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-      const { data: imagePath } = await axios.post(
-        "/api/v1/upload",
-        formData,
-        configUpload
-      );
-
-      // Values for new category
-      const name = values.name;
-      const description = values.description;
-      const details = { name, description, imagePath };
-
       dispatch({ type: "RESET_STATE" });
 
       dispatch({ type: "REQUEST" });
@@ -204,14 +235,14 @@ const CategotyAddEditModal = (props) => {
         },
       };
 
-      const { data } = await axios.post(`/api/v1/categories`, details, config);
+      const { data } = await axios.post(`/api/v1/products`, details, config);
 
       dispatch({ type: "SUCCESS" });
 
       // To display message
       dispatchRedux(updateSuccessMessage(data.message));
 
-      addCateInState(data.createdCategory);
+      addProdInState(data.createdProduct);
 
       // To close the modal
       handleClose();
@@ -226,20 +257,11 @@ const CategotyAddEditModal = (props) => {
     }
   };
 
-  // For new image
-  const [image, setImage] = useState();
-  const handleUploadImage = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-
-    setImagePath(file.name);
-  };
-
   return (
     <>
       <ModalWrapper open={open} handleClose={handleClose}>
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
-          {`${actionType} category details`}
+          {`${actionType} product details`}
         </Typography>
 
         <Formik
@@ -248,20 +270,28 @@ const CategotyAddEditModal = (props) => {
               ? {
                   name: rowData.name,
                   description: rowData.description,
+                  price: rowData.price,
+                  countInStock: rowData.countInStock,
+                  category: rowData.category_id,
                   imagePath,
                 }
               : {
                   name: "",
                   description: "",
+                  price: "",
+                  countInStock: "",
+                  category: "",
                   imagePath,
                 }
           }
-          validationSchema={CATEGORY_ADD_EDIT_VALIDATION}
-          onSubmit={actionType === "Edit" ? handleEdit : handleAdd}
+          validationSchema={PRODUCT_ADD_EDIT_VALIDATION}
+          onSubmit={
+            actionType === "Edit" ? handleProductEdit : handleProductAdd
+          }
         >
           <FormikForm>
             <FormFields>
-              <Textfield label="Category Name" name="name" required />
+              <Textfield label="Product Name" name="name" required />
 
               <Textfield
                 label="Description"
@@ -271,45 +301,72 @@ const CategotyAddEditModal = (props) => {
                 required
               />
 
+              <Textfield label="Price" name="price" required />
+
+              <Textfield label="Count In Stock" name="countInStock" required />
+
+              <SelectWrapper
+                name="category"
+                label="Category"
+                list={categories.map((category) => {
+                  return {
+                    id: category.category_id,
+                    value: category.category_id,
+                    text: category.name,
+                  };
+                })}
+              />
+
               {/* Upload */}
               <Box sx={{ display: "flex", gap: 1 }}>
                 <TextField
                   name="imagePath"
                   label="Image"
                   required
-                  // value={image && image.name ? image.name : ""}
                   value={imagePath}
                   disabled
                   fullWidth
                   error={uploadError}
-                  helperText={uploadError && "Choose a image!"}
+                  helperText={uploadError && "Required"}
                 />
 
                 <MUIButton variant="contained" component="label">
-                  Image
-                  <input type="file" hidden onChange={handleUploadImage} />
+                  Upload
+                  <input type="file" hidden onChange={fileSelectedHandler} />
                 </MUIButton>
               </Box>
-              <Typography variant="body2">
-                Upload new image to edit the edit the image as well!
-              </Typography>
+
+              <Checkbox
+                label="Featured?"
+                // defaultChecked={rowData.role === 0 ? false : true}
+                defaultChecked={
+                  rowData.featured
+                    ? rowData.featured === 0
+                      ? false
+                      : true
+                    : false
+                }
+                name="featured"
+                sx={{ mt: -1.5 }}
+              />
 
               <Button
                 color="secondary"
                 endIcon={<KeyboardArrowRightIcon />}
                 disableElevation
-                sx={{ alignSelf: "flex-start" }}
+                // sx={{ alignSelf: "flex-start" }}
                 loading={isLoading}
-                fullWidth
+                // fullWidth
+                // disabled={uploading}
               >
-                {actionType === "Edit" ? "Save Changes" : "Add Category"}
+                {actionType === "Edit" ? "Save Changes" : "Add Product"}
               </Button>
             </FormFields>
           </FormikForm>
         </Formik>
 
         {error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          <Alert severity="error" sx={{ my: 2 }}>
             {error}
           </Alert>
         )}
@@ -318,4 +375,4 @@ const CategotyAddEditModal = (props) => {
   );
 };
 
-export default CategotyAddEditModal;
+export default ProductAddEditModal;

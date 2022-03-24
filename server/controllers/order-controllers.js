@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 
 import db from "../models/index.js";
+const { Op } = db.Sequelize;
+
 const Order = db.order;
 const Product = db.product;
 const OrderLine = db.orderLine;
@@ -53,7 +55,7 @@ const getOrderById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get logged in user orders
-// @route   GET /api/orders/myorders
+// @route   GET /api/v1/orders/myorders
 // @access  Private
 const getMyOrders = asyncHandler(async (req, res) => {
   try {
@@ -75,7 +77,7 @@ const getMyOrders = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get logged in user orders
-// @route   GET /api/orders/myorders
+// @route   GET /api/v1/orders/myorders
 // @access  Private
 const createOrder = asyncHandler(async (req, res) => {
   try {
@@ -139,7 +141,7 @@ const createOrder = asyncHandler(async (req, res) => {
 });
 
 // @desc    To update payment status (after user makes payment)
-// @route   PUT /api/orders/:id/pay
+// @route   PUT /api/v1/orders/:id/pay
 // @access  Private
 const updatePayment = asyncHandler(async (req, res) => {
   const orderId = req.params.id;
@@ -161,4 +163,53 @@ const updatePayment = asyncHandler(async (req, res) => {
   }
 });
 
-export { getOrderById, getMyOrders, createOrder, updatePayment };
+////////////////////////////////////////////////////////
+// Admin
+////////////////////////////////////////////////////////
+
+// @desc    Get all orders
+// @route   PUT /api/orders
+// @access  Private
+const getOrders = asyncHandler(async (req, res) => {
+  console.log("===========================");
+  console.log(req.params.from);
+  console.log(req.params.to);
+
+  const orders = await Order.findAll({
+    where: {
+      createdAt: {
+        [Op.and]: {
+          [Op.gte]: req.params.from,
+          [Op.lte]: req.params.to,
+        },
+      },
+    },
+
+    attributes: {
+      exclude: ["shipping_address_id"],
+    },
+
+    include: [
+      {
+        model: Product,
+        attributes: ["product_id", "name", "price"],
+
+        through: {
+          attributes: ["orderline_id", "quantity"],
+        },
+      },
+
+      {
+        model: ShippingAddress,
+      },
+    ],
+  });
+
+  if (orders) {
+    res.json(orders);
+  } else {
+    throw new Error(`Orders could not fetched!`);
+  }
+});
+
+export { getOrderById, getMyOrders, createOrder, updatePayment, getOrders };

@@ -11,7 +11,7 @@ const CheckboxWrapper = ({ name, defaultChecked, ...otherProps }) => {
   const handleChange = (event) => {
     const { checked } = event.target;
     console.log("checked", checked);
-    setFieldValue(name, checked ? 1 : 0);
+    setFieldValue(name, checked);
   };
 
   const configCheckbox = {
@@ -21,7 +21,7 @@ const CheckboxWrapper = ({ name, defaultChecked, ...otherProps }) => {
   };
   return (
     <FormControlLabel
-      control={<Checkbox defaultChecked={defaultChecked} />}
+      control={<Checkbox defaultChecked={defaultChecked ? true : false} />}
       {...configCheckbox}
     />
   );

@@ -11,12 +11,12 @@ export default (sequelize, Sequelize) => {
       },
 
       first_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
 
       last_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
 

@@ -50,8 +50,8 @@ db.review = Review(sequelize, Sequelize);
 db.order = Order(sequelize, Sequelize);
 db.orderLine = OrderLine(sequelize, Sequelize);
 db.shippingAddress = ShippingAddress(sequelize, Sequelize);
-db.cart = Cart(sequelize, Sequelize);
-db.cartLine = CartLine(sequelize, Sequelize);
+// db.cart = Cart(sequelize, Sequelize);
+// db.cartLine = CartLine(sequelize, Sequelize);
 
 //////////////////////////////////////////////
 // Relationship between user and default address
@@ -127,22 +127,23 @@ db.order.belongsTo(db.shippingAddress, {
 
 // Relationship between cart and (product, user)
 // with user
-db.user.hasOne(db.cart, {
-  foreignKey: "user_id",
-});
-db.cart.belongsTo(db.user, {
-  foreignKey: "user_id",
-});
-// with product
-db.product.belongsToMany(db.cart, {
-  through: db.cartLine,
-  foreignKey: "product_id",
-});
+// Changed below
+// db.user.hasOne(db.cart, {
+//   foreignKey: "user_id",
+// });
+// db.cart.belongsTo(db.user, {
+//   foreignKey: "user_id",
+// });
+// // with product
+// db.product.belongsToMany(db.cart, {
+//   through: db.cartLine,
+//   foreignKey: "product_id",
+// });
 
-db.cart.belongsToMany(db.product, {
-  through: db.cartLine,
-  foreignKey: "cart_id",
-});
+// db.cart.belongsToMany(db.product, {
+//   through: db.cartLine,
+//   foreignKey: "cart_id",
+// });
 
 //////////////////////////////////////////////
 // to sync database

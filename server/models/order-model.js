@@ -34,11 +34,11 @@ export default (sequelize, Sequelize) => {
       },
 
       payment_method: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
       },
 
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
       },
     },
 

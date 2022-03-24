@@ -6,6 +6,7 @@ import {
   getMyOrders,
   createOrder,
   updatePayment,
+  getOrders,
 } from "../controllers/order-controllers.js";
 
 import auth from "../middlewares/auth.js";
@@ -20,6 +21,7 @@ router.post("/", auth, createOrder);
 router.put("/:id/pay", auth, updatePayment);
 
 // Admin
+router.get("/:from/:to", auth, authAdmin, getOrders);
 // router.route("/:id/pay").put(auth, updateOrderToPaid);
 // router.route("/:id/deliver").put(auth, authAdmin, updateOrderToDelivered);
 

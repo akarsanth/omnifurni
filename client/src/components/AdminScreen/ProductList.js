@@ -92,6 +92,9 @@ const columns = [
     title: "Price",
     field: "price",
     filtering: false,
+    render: (rowData) => {
+      return `NPR. ${rowData.price}`;
+    },
   },
 
   {
@@ -102,7 +105,6 @@ const columns = [
 
   {
     title: "Is Featured?",
-
     field: "featured",
     lookup: {
       0: "Not Featured",
@@ -125,7 +127,7 @@ const ProductListScreen = () => {
 
   const { token } = useSelector((state) => state.token);
 
-  // Save Changes Button Handler
+  // Fetch product list
   useEffect(() => {
     async function fetchData() {
       try {
@@ -177,13 +179,6 @@ const ProductListScreen = () => {
     handleOpen();
   };
 
-  // Handle Delete
-  const [deleteError, setDeleteError] = useState("");
-  const [deleteState, setDeleteState] = useState({
-    continueDeleting: false,
-    deletingProduct: "",
-  });
-
   // Dialog Modal
   const [openDialog, setOpenDialog] = React.useState(false);
 
@@ -198,10 +193,18 @@ const ProductListScreen = () => {
     setOpenDialog(false);
   };
 
-  const handleDelete = async (productId) => {
+  // Delete handler
+  // Handle Delete
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteState, setDeleteState] = useState({
+    continueDeleting: false,
+    deletingProduct: {},
+  });
+
+  const handleDelete = async (product) => {
     setDeleteState({
       continueDeleting: false,
-      deletingProduct: productId,
+      deletingProduct: product,
     });
 
     handleOpenDialog();
@@ -234,7 +237,7 @@ const ProductListScreen = () => {
   );
 
   useEffect(() => {
-    const deleteProduct = async (productId) => {
+    const deleteProduct = async ({ product_id, imagePath }) => {
       try {
         setDeleteError("");
 
@@ -245,16 +248,26 @@ const ProductListScreen = () => {
           },
         };
         const { data } = await axios.delete(
-          `/api/v1/products/${productId}`,
+          `/api/v1/products/${product_id}`,
           config
         );
+
+        console.log(imagePath);
+        // To delete image
+        await axios.post("/api/v1/upload/delete", {
+          imagePath,
+        });
 
         // To display message
         dispatchRedux(updateSuccessMessage(data.message));
 
-        // To remove the deleted product from state
+        setDeleteState({
+          continueDeleting: false,
+          deletingProduct: {},
+        });
 
-        deleteProdInState(productId);
+        // To remove the deleted product from state
+        deleteProdInState(product_id);
       } catch (error) {
         setDeleteError(
           error.response && error.response.data.message
@@ -263,7 +276,7 @@ const ProductListScreen = () => {
         );
       }
     };
-    if (deleteState.deletingProduct && deleteState.continueDeleting) {
+    if (deleteState.deletingProduct !== {} && deleteState.continueDeleting) {
       deleteProduct(deleteState.deletingProduct);
     }
   }, [deleteState, dispatchRedux, token, deleteProdInState]);
@@ -314,11 +327,12 @@ const ProductListScreen = () => {
           {
             icon: tableIcons.Delete,
             tooltip: "Delete Product",
-            onClick: (event, rowData) => handleDelete(rowData.product_id),
+            onClick: (event, rowData) => handleDelete(rowData),
           },
         ]}
       />
 
+      {/* Confirmation Dialog */}
       <Dialog
         open={openDialog}
         onClose={() => handleCloseDialog("no")}
