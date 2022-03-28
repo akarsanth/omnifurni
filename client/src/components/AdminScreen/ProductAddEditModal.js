@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form as FormikForm } from "formik";
 import { PRODUCT_ADD_EDIT_VALIDATION } from "../FormsUI/YupFormik";
 
-////////////////////////////////
+////////////////////////////////////
 // MUI Components
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -28,6 +28,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Alert from "@mui/material/Alert";
 import ModalWrapper from "../AddEditModal";
 import MUIButton from "@mui/material/Button";
+import CloseButton from "../Common/CloseButton";
 
 ////////////////////////////////////
 // Reducers
@@ -263,6 +264,7 @@ const ProductAddEditModal = (props) => {
   return (
     <>
       <ModalWrapper open={open} handleClose={handleClose}>
+        <CloseButton handleClose={handleClose} />
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
           {`${actionType} product details`}
         </Typography>

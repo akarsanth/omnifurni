@@ -24,6 +24,7 @@ import Checkbox from "../FormsUI/Checkbox";
 import Button from "../FormsUI/Button";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import ModalWrapper from "../AddEditModal";
+import CloseButton from "../Common/CloseButton";
 
 ////////////////////////////////////
 // Reducers
@@ -116,6 +117,7 @@ const UserEditModal = (props) => {
   return (
     <>
       <ModalWrapper open={open} handleClose={handleClose}>
+        <CloseButton handleClose={handleClose} />
         <Typography variant="h6" sx={{ mb: 4, fontWeight: 700 }}>
           Edit User Details
         </Typography>

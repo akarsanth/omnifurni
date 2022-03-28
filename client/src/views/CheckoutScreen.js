@@ -37,7 +37,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
-
 import Typography from "@mui/material/Typography";
 
 //////////////////////////////////
@@ -250,33 +249,6 @@ const CheckoutScreen = () => {
                         </TableCellBox>
                       </TableCell>
                     </TableRow>
-
-                    {/* <TableRow>
-                      <TableCell sx={{ px: 0 }} colSpan="2">
-                        <FormControl>
-                          <FormLabel id="demo-controlled-radio-buttons-group">
-                            Pay with
-                          </FormLabel>
-                          <RadioGroup
-                            aria-labelledby="demo-controlled-radio-buttons-group"
-                            name="controlled-radio-buttons-group"
-                            value={value}
-                            onChange={handleChange}
-                          >
-                            <FormControlLabel
-                              value="cod"
-                              control={<Radio />}
-                              label="COD (Cash On Delivery)"
-                            />
-                            <FormControlLabel
-                              value="khalti"
-                              control={<Radio />}
-                              label="Khalti"
-                            />
-                          </RadioGroup>
-                        </FormControl>
-                      </TableCell>
-                    </TableRow> */}
 
                     <TableRow>
                       <TableCell sx={{ px: 0 }} colSpan="2">

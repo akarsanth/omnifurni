@@ -16,12 +16,19 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 
 //////////////////////////////////////
 // Custom Components
 import CheckoutSteps from "../components/CheckoutSteps";
-import FormContainer from "../components/FormsUI/FormContainer";
 import Payment from "../components/PaymentScreen/Payment";
+import { CustTableCell, TableCellBox } from "../components/Checkout/Table";
 
 //////////////////////////////////
 // Reducer
@@ -48,7 +55,7 @@ const reducer = (state, action) => {
   }
 };
 
-///////////////////////////////////
+////////////////////////////////////////
 // MAIN Component
 const PaymentScreen = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -115,37 +122,71 @@ const PaymentScreen = () => {
           {order.payment_method === "" ? (
             <></>
           ) : order.payment_method === null ? (
-            <FormContainer>
-              <FormControl>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Pay with
-                </Typography>
-                <RadioGroup
-                  aria-labelledby="demo-controlled-radio-buttons-group"
-                  name="controlled-radio-buttons-group"
-                  value={value}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value="cod"
-                    control={<Radio />}
-                    label="COD (Cash On Delivery)"
-                  />
-                  <FormControlLabel
-                    value="khalti"
-                    control={<Radio />}
-                    label="Khalti"
-                  />
-                </RadioGroup>
-              </FormControl>
+            <Grid
+              container
+              columns={{ xs: 1, md: 10 }}
+              sx={{ mb: 12, mt: 0, justifyContent: "space-between", gap: 0.5 }}
+            >
+              <Grid item xs={1} md={5.5}>
+                <Box sx={{ boxShadow: 2, py: 3, px: { xs: 2, sm: 5 } }}>
+                  <FormControl>
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                      Pay with
+                    </Typography>
+                    <RadioGroup
+                      aria-labelledby="demo-controlled-radio-buttons-group"
+                      name="controlled-radio-buttons-group"
+                      value={value}
+                      onChange={handleChange}
+                    >
+                      <FormControlLabel
+                        value="cod"
+                        control={<Radio />}
+                        label="COD (Cash On Delivery)"
+                      />
+                      <FormControlLabel
+                        value="khalti"
+                        control={<Radio />}
+                        label="Khalti"
+                      />
+                    </RadioGroup>
+                  </FormControl>
 
-              {/* here */}
-              <Payment
-                value={value}
-                orderId={orderId}
-                amount={order.total_amount}
-              />
-            </FormContainer>
+                  {/* here */}
+                  <Payment
+                    value={value}
+                    orderId={orderId}
+                    amount={order.total_amount}
+                  />
+                </Box>
+              </Grid>
+
+              <Grid
+                item
+                xs={1}
+                md={4}
+                sx={{ border: 1, px: 3, py: 2, alignSelf: "flex-start" }}
+              >
+                <Box>
+                  <Typography sx={{ fontWeight: 700, fontSize: 16, mb: 1 }}>
+                    Order Summary
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: 4,
+                    }}
+                  >
+                    <Typography fontSize={16} fontWeight={700}>
+                      Total Amount
+                    </Typography>
+                    <Typography>NPR. {order.total_amount}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
           ) : (
             <Box sx={{ mt: 5, mb: 10 }}>
               <Alert severity="info" sx={{ mb: 2 }}>

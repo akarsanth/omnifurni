@@ -123,6 +123,11 @@ const ViewOrder = () => {
             order.order_id
           } was placed on ${order.createdAt.substring(0, 10)}`}</Typography>
 
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 4 }}>
+            <Typography>Status:</Typography>
+            <Chip variant="outlined" label={order.status} />
+          </Box>
+
           <Box sx={{ mb: 4 }}>
             <Typography variant="h6">Order Details</Typography>
 
@@ -185,13 +190,13 @@ const ViewOrder = () => {
               <Chip
                 label={
                   order.payment_method === null
-                    ? "Payment Pending"
+                    ? "Not Selected"
                     : order.payment_method
                 }
               />
             </Box>
 
-            {order.payment_method === null && (
+            {order.payment_method === null && order.status !== "Cancelled" && (
               <Link
                 to={`/payment/?orderId=${order.order_id}`}
                 component={RouterLink}

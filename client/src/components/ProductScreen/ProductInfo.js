@@ -23,6 +23,7 @@ import { addToCart } from "../../app/features/cart/cart-actions";
 /////////////////////////////////////
 // Custom Components
 import CustomizedGrid from "../Grid/CustomizedGrid";
+import NumericUpDown from "../Common/NumericUpDown";
 
 //////////////////////////////////////
 // Styled Components
@@ -35,6 +36,8 @@ const ProductImage = styled.img`
   height: 500px;
 `;
 
+///////////////////////////////////////////////
+// MAIN Component
 const ProductInfo = ({ productDetails, category, setQty, qty }) => {
   const {
     product_id,
@@ -139,23 +142,12 @@ const ProductInfo = ({ productDetails, category, setQty, qty }) => {
               sx={{
                 display: `${countInStock === 0 ? "none" : "flex"}`,
                 alignItems: "center",
-                gap: 1,
+                gap: 2,
               }}
             >
               <Typography>Quantity:</Typography>
-              <FormControl>
-                <Select
-                  value={qty}
-                  onChange={(event) => setQty(event.target.value)}
-                  size="small"
-                >
-                  {[...Array(countInStock).keys()].map((val) => (
-                    <MenuItem value={val + 1} key={val + 1}>
-                      {val + 1}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+
+              <NumericUpDown inStock={countInStock} qty={qty} setQty={setQty} />
             </Box>
 
             <Button

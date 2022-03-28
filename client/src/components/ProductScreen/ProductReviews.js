@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { useSelector } from "react-redux";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import axios from "axios";
+
+////////////////////////////////////////
+// Redux Related
+import { useDispatch, useSelector } from "react-redux";
+import { updateSuccessMessage } from "../../app/features/message/message-slice";
 
 ////////////////////////////////////////
 // MUI Components
@@ -10,7 +14,7 @@ import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import TextField from "@mui/material/TextField";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Avatar from "@mui/material/Avatar";
 import Link from "@mui/material/Link";
 import Alert from "@mui/material/Alert";
@@ -55,6 +59,7 @@ const labels = {
 ////////////////////////////////////////
 // MAIN COMPONENT
 const ProductReviews = (props) => {
+  const dispatchRedux = useDispatch();
   const { reviews, reviewUpdated } = props;
 
   // To access id from param
@@ -112,6 +117,8 @@ const ProductReviews = (props) => {
 
       await axios.post(`/api/v1/products/${params.id}/reviews`, review, config);
 
+      dispatchRedux(updateSuccessMessage("Review added successfully!"));
+
       dispatch({ type: "CREATE_REVIEW_SUCCESS" });
 
       reviewUpdated();
@@ -125,6 +132,33 @@ const ProductReviews = (props) => {
       });
     }
   };
+
+  const [userHasBought, setUserHasBought] = useState(null);
+  useEffect(() => {
+    const check = async () => {
+      const { data } = await axios.get(`/api/v1/orders/myorders`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      let result;
+      data.forEach((order) => {
+        if (order.status === "Delivered") {
+          order.products.forEach((product) => {
+            if (product.product_id === parseInt(params.id)) {
+              result = true;
+              return;
+            }
+          });
+        }
+      });
+
+      setUserHasBought(result ? result : false);
+    };
+
+    if (token) {
+      check();
+    }
+  }, [token, params.id]);
 
   return (
     <>
@@ -169,77 +203,85 @@ const ProductReviews = (props) => {
       </Box>
 
       {userInfo ? (
-        alreadySubmitted ? (
-          <Alert severity="info" sx={{ mt: 3 }}>
-            You have already submitted a review!
-          </Alert>
-        ) : (
-          <Box sx={{ backgroundColor: "grey.200", p: 2, mt: 2 }}>
-            <Typography variant="body2" sx={{ fontWeight: 700, mb: 2 }}>
-              Write a review:
-            </Typography>
-            <Box
-              sx={{
-                width: 200,
-                display: "flex",
-                alignItems: "center",
-                mb: 2,
-              }}
-            >
-              <Rating
-                value={rating}
-                precision={0.5}
-                size="large"
-                onChange={(event, newValue) => {
-                  setRating(newValue);
+        <>
+          {userHasBought === null ? (
+            <></>
+          ) : userHasBought === false ? (
+            <Alert severity="info" sx={{ mt: 3 }}>
+              You have not bought this product!
+            </Alert>
+          ) : alreadySubmitted ? (
+            <Alert severity="info" sx={{ mt: 3 }}>
+              You have already submitted a review!
+            </Alert>
+          ) : (
+            <Box sx={{ backgroundColor: "grey.200", p: 2, mt: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 700, mb: 2 }}>
+                Write a review:
+              </Typography>
+              <Box
+                sx={{
+                  width: 200,
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 2,
                 }}
-                onChangeActive={(event, newHover) => {
-                  setHover(newHover);
-                }}
+              >
+                <Rating
+                  value={rating}
+                  precision={0.5}
+                  size="large"
+                  onChange={(event, newValue) => {
+                    setRating(newValue);
+                  }}
+                  onChangeActive={(event, newHover) => {
+                    setHover(newHover);
+                  }}
+                />
+
+                {rating !== null && (
+                  <Typography variant="body2" sx={{ ml: 2 }}>
+                    {labels[hover !== -1 ? hover : rating]}
+                  </Typography>
+                )}
+              </Box>
+
+              <TextField
+                placeholder="Write something...."
+                multiline
+                rows={4}
+                sx={{ background: "#fff", mb: 2 }}
+                fullWidth
+                size="small"
+                value={comment}
+                onChange={(event) => setComment(event.target.value)}
               />
 
-              {rating !== null && (
-                <Typography variant="body2" sx={{ ml: 2 }}>
-                  {labels[hover !== -1 ? hover : rating]}
-                </Typography>
+              <LoadingButton
+                color="primary"
+                endIcon={<KeyboardArrowRightIcon />}
+                disableElevation
+                variant="contained"
+                sx={{
+                  alignSelf: "flex-start",
+                  px: 6,
+                  py: 1,
+                }}
+                size="small"
+                onClick={reviewSubmitHandler}
+                loading={isLoading}
+              >
+                Submit
+              </LoadingButton>
+
+              {error && (
+                <Alert severity="error" sx={{ my: 2 }}>
+                  {error}
+                </Alert>
               )}
             </Box>
-
-            <TextField
-              placeholder="Write something...."
-              multiline
-              rows={4}
-              sx={{ background: "#fff", mb: 2 }}
-              fullWidth
-              size="small"
-              value={comment}
-              onChange={(event) => setComment(event.target.value)}
-            />
-
-            <Button
-              color="primary"
-              endIcon={<KeyboardArrowRightIcon />}
-              disableElevation
-              variant="contained"
-              sx={{
-                alignSelf: "flex-start",
-                px: 6,
-                py: 1,
-              }}
-              size="small"
-              onClick={reviewSubmitHandler}
-              loading={`${isLoading}`}
-            >
-              Submit
-            </Button>
-
-            {error && (
-              <Alert severity="error" sx={{ my: 2 }}>
-                {error}
-              </Alert>
-            )}
-          </Box>
-        )
+          )}
+        </>
       ) : (
         <Alert severity="info" sx={{ mt: 3 }}>
           You need to

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useCallback } from "react";
 import axios from "axios";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -34,10 +34,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import Chip from "@mui/material/Chip";
+import Button from "@mui/material/Button";
 
 ///////////////////////////////////////
-import OrderEdit from "./OrderEdit";
+import OrderEditModal from "./OrderEditModal";
 
 // Redux
 const initialState = {
@@ -125,15 +125,9 @@ const columns = [
     filtering: false,
 
     render: (rowData) => {
-      return (
-        <>
-          {rowData.payment_method === null ? (
-            <Chip label="Not Selected" color="error" variant="outlined" />
-          ) : (
-            <Chip label={rowData.payment_method} />
-          )}
-        </>
-      );
+      return rowData.payment_method === null
+        ? "Not Selected"
+        : rowData.payment_method;
     },
   },
 
@@ -141,18 +135,6 @@ const columns = [
     title: "Status",
     field: "status",
     filtering: false,
-
-    render: (rowData) => {
-      return (
-        <>
-          {rowData.status === "Cancelled" ? (
-            <Chip label={rowData.status} color="error" variant="outlined" />
-          ) : (
-            <Chip label={rowData.status} variant="outlined" />
-          )}
-        </>
-      );
-    },
   },
 
   {
@@ -168,6 +150,8 @@ const columns = [
 /////////////////////////////////////////////
 // MAIN Component
 const OrderListScreen = () => {
+  const dispatchRedux = useDispatch();
+
   // reducers
   const [state, dispatch] = useReducer(orderListReducer, initialState);
   const { isLoading, orderList, error } = state;
@@ -235,6 +219,21 @@ const OrderListScreen = () => {
     }
   }, [token, search, date]);
 
+  // Order Edit Modal
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  // Selected (Clicked) Row
+  const [rowData, setRowData] = useState({});
+  const handleOrderEdit = (rowData) => {
+    setRowData(rowData);
+    handleOpen();
+  };
+
+  //
+  const updateOrderHandler = ({ orderId, status }) => {};
+
   return (
     <>
       {error && <Alert severity="error">{error}</Alert>}
@@ -277,8 +276,7 @@ const OrderListScreen = () => {
 
               return (
                 <Box sx={{ mx: 4, my: 5 }}>
-                  <OrderEdit rowData={rowData} setSearch={setSearch} />
-
+                  <Box sx={{ mb: 5 }}></Box>
                   <Box sx={{ mb: 5 }}>
                     <Typography fontWeight={700} sx={{ mb: 2 }}>
                       Products
@@ -423,7 +421,24 @@ const OrderListScreen = () => {
           },
           actionsColumnIndex: 0,
         }}
+        // actions={[
+        //   {
+        //     icon: tableIcons.Edit,
+        //     tooltip: "Edit Order",
+        //     onClick: (event, rowData) => handleOrderEdit(rowData),
+        //   },
+        // ]}
       />
+
+      {open && (
+        <OrderEditModal
+          open={open}
+          handleClose={handleClose}
+          rowData={rowData}
+          // editCateInState={editCateInState}
+          // addCateInState={addCateInState}
+        />
+      )}
     </>
   );
 };

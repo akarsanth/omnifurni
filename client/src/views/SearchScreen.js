@@ -17,6 +17,10 @@ import EmptyView from "../components/Common/EmptyView";
 import CustomizedGrid from "../components/Grid/CustomizedGrid";
 import ProductCard from "../components/ProductCard";
 import FilterPanel from "../components/Filter/FilterPanel";
+import Pagination from "@mui/material/Pagination";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import FormControl from "@mui/material/FormControl";
 
 const initialState = {
   isLoading: false,
@@ -50,28 +54,50 @@ const SearchScreen = () => {
 
   const searchTerm = searchParams.get("q") || "";
 
+  // Pagination
+  const page = searchParams.get("page") || 1;
+  const [pages, setPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const handlePaginationChange = (value) => {
+    if (value === 1) {
+      setSearchParams({ q: searchTerm });
+    } else {
+      setSearchParams({ q: searchTerm, page: value });
+    }
+  };
+
   useEffect(() => {
     const getMatchedProducts = async () => {
       try {
         dispatch({ type: "REQUEST" });
 
         const { data } = await axios.get(
-          `/api/v1/products/search?keyword=${searchTerm}`
+          `/api/v1/products/search?keyword=${searchTerm}&page=${page}&pageSize=${pageSize}`
         );
+
+        const { matchedProducts, pages } = data;
 
         dispatch({
           type: "SUCCESS",
-          payload: data,
+          payload: matchedProducts,
         });
 
-        const maxValue = Math.max(...data.map((x) => x.price));
-        const minValue = Math.min(...data.map((x) => x.price));
+        setPages(pages);
+
+        let maxValue = Math.max(...matchedProducts.map((x) => x.price));
+        let minValue = Math.min(...matchedProducts.map((x) => x.price));
+        maxValue = Number.isFinite(maxValue) ? maxValue : 0;
+        minValue = Number.isFinite(minValue) ? minValue : 0;
 
         // Initial selected price
         setSelectedPrice([Math.floor(minValue), Math.ceil(maxValue)]);
 
         // Min and Max value
         setMinMaxValue([Math.floor(minValue), Math.ceil(maxValue)]);
+
+        // Resetting rating
+        setSelectedRating(0);
       } catch (error) {
         dispatch({
           type: "FAIL",
@@ -84,7 +110,7 @@ const SearchScreen = () => {
     };
 
     getMatchedProducts();
-  }, [searchTerm]);
+  }, [searchTerm, page, pageSize]);
 
   // Filtering
   const [resultsFound, setResultsFound] = useState(true);
@@ -195,6 +221,41 @@ const SearchScreen = () => {
             ) : (
               <EmptyView />
             )}
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 6,
+                pt: 8,
+              }}
+            >
+              <Pagination
+                count={pages}
+                page={parseInt(page)}
+                color="primary"
+                showFirstButton
+                showLastButton
+                onChange={(e, value) => handlePaginationChange(value)}
+                disabled={list.length === 0}
+              />
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography variant="subtitle2">Show</Typography>
+                <Select
+                  value={pageSize}
+                  onChange={(event) => setPageSize(event.target.value)}
+                  size="small"
+                  disabled={list.length === 0}
+                >
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={15}>15</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                </Select>
+                <Typography variant="subtitle2">per page</Typography>
+              </Box>
+            </Box>
           </Grid>
         </CustomizedGrid>
       </Box>

@@ -14,7 +14,7 @@ const EmptyViewWrapper = styled(Box)`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 100%;
+  margin-bottom: 20px;
 
   & img {
     max-width: 200px;

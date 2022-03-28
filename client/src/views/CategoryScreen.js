@@ -2,7 +2,7 @@ import React, { useState, useEffect, useReducer } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 
 /////////////////////////////////////////
 // MUI Components
@@ -15,6 +15,9 @@ import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";
+import Pagination from "@mui/material/Pagination";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 /////////////////////////////////////
 // Custom Components
@@ -55,22 +58,36 @@ const CategoryScreen = () => {
 
   const { categories } = useSelector((state) => state.categoryList);
   const [categoryName, setCategoryName] = useState("");
+
+  //////////////////////////////////////
+  // Fetching products under the chosen category
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const [pages, setPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   useEffect(() => {
     const getProductList = async () => {
       try {
         dispatch({ type: "REQUEST" });
 
+        console.log(pageSize);
+        console.log(page);
+
         const { data } = await axios.get(
-          `/api/v1/products/category/${params.id}`
+          `/api/v1/products/category/${params.id}?page=${page}&pageSize=${pageSize}`
         );
+
+        const { products, pages } = data;
 
         dispatch({
           type: "SUCCESS",
-          payload: data,
+          payload: products,
         });
 
-        const maxValue = Math.max(...data.map((x) => x.price));
-        const minValue = Math.min(...data.map((x) => x.price));
+        setPages(pages);
+
+        const maxValue = Math.max(...products.map((x) => x.price));
+        const minValue = Math.min(...products.map((x) => x.price));
 
         // Initial selected price
         setSelectedPrice([Math.floor(minValue), Math.ceil(maxValue)]);
@@ -98,10 +115,18 @@ const CategoryScreen = () => {
     if (category) {
       setCategoryName(category.name);
     }
-  }, [params.id, categories]);
+  }, [params.id, categories, page, pageSize]);
+
+  const handlePaginationChange = (value) => {
+    if (value === 1) {
+      setSearchParams({});
+    } else {
+      setSearchParams({ page: value });
+    }
+  };
 
   // Filtering
-  const [resultsFound, setResultsFound] = useState(true);
+  const [resultsFound, setResultsFound] = useState(null);
   const [list, setList] = useState(productList);
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState([1000, 50000]);
@@ -143,7 +168,6 @@ const CategoryScreen = () => {
 
   return (
     <Container sx={{ pt: 5, pb: 10 }}>
-      {isLoading && <CircularProgress />}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
@@ -192,7 +216,10 @@ const CategoryScreen = () => {
               variant="h6"
             >{`Product(s) under category "${categoryName}"`}</Typography>
 
-            {resultsFound ? (
+            {isLoading && <CircularProgress sx={{ mb: 2 }} />}
+
+            {resultsFound === null && <></>}
+            {resultsFound === true && (
               <Box
                 sx={{
                   display: "grid",
@@ -221,9 +248,42 @@ const CategoryScreen = () => {
                   })}
                 </>
               </Box>
-            ) : (
-              <EmptyView />
             )}
+            {resultsFound === false && !isLoading && <EmptyView />}
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 6,
+                pt: 8,
+              }}
+            >
+              <Pagination
+                count={pages}
+                page={parseInt(page)}
+                color="primary"
+                showFirstButton
+                showLastButton
+                onChange={(e, value) => handlePaginationChange(value)}
+                disabled={list === []}
+              />
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Typography variant="subtitle2">Show</Typography>
+                <Select
+                  value={pageSize}
+                  onChange={(event) => setPageSize(event.target.value)}
+                  size="small"
+                >
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={15}>15</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                </Select>
+                <Typography variant="subtitle2">per page</Typography>
+              </Box>
+            </Box>
           </Grid>
         </CustomizedGrid>
       </Box>

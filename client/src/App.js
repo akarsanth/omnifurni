@@ -97,7 +97,7 @@ function App() {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.token);
 
-  const { isAuthenticated } = useSelector((state) => state.authUser);
+  const { isAuthenticated, userInfo } = useSelector((state) => state.authUser);
 
   const { success, info, error } = useSelector((state) => state.message);
 
@@ -107,10 +107,9 @@ function App() {
     // When the app loads if there is no firstLogin
     // It is not possible to get the access token
     // And without access token it is not possible to get user info
-
     const firstLogin = localStorage.getItem("firstLogin");
 
-    if (firstLogin) {
+    if (firstLogin && !userInfo) {
       // To get Access token
       dispatch(getToken());
     }
@@ -118,7 +117,7 @@ function App() {
 
   useEffect(() => {
     // if token is present
-    if (token) {
+    if (token && !userInfo) {
       dispatch(fetchAuthUser(token));
     }
   }, [token, dispatch]);

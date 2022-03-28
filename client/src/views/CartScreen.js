@@ -13,6 +13,7 @@ import {
 // Custom Components
 import CheckoutSteps from "../components/CheckoutSteps";
 import CustomizedGrid from "../components/Grid/CustomizedGrid";
+import NumericUpDown from "../components/Common/NumericUpDown/cart";
 import {
   Separator,
   CustTableCell,
@@ -33,9 +34,6 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "@mui/material/Link";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
@@ -50,11 +48,6 @@ const CartScreen = () => {
   const removeFromCartHandler = (id) => {
     console.log("here");
     dispatch(removeFromCart(id));
-  };
-
-  const quantityChangeHandler = (id, qty) => {
-    console.log(id, qty);
-    dispatch(updateQuantity(id, qty));
   };
 
   return (
@@ -139,24 +132,11 @@ const CartScreen = () => {
                         NPR {item.price}
                       </TableCell>
                       <TableCell>
-                        <FormControl>
-                          <Select
-                            value={item.qty}
-                            onChange={(event) =>
-                              quantityChangeHandler(
-                                item.product_id,
-                                event.target.value
-                              )
-                            }
-                            size="small"
-                          >
-                            {[...Array(item.countInStock).keys()].map((val) => (
-                              <MenuItem value={val + 1} key={val + 1}>
-                                {val + 1}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
+                        <NumericUpDown
+                          qty={item.qty}
+                          inStock={item.countInStock}
+                          productId={item.product_id}
+                        />
                       </TableCell>
                       <TableCell align="right" sx={{ pr: 0, fontWeight: 700 }}>
                         NPR {item.price * item.qty}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 import { Link as RouterLink } from "react-router-dom";
 
@@ -68,14 +68,17 @@ const RegisterScreen = () => {
 
   ///////////////////////////////
   // register button handler
+  const formikRef = useRef();
   const submitHandler = (values, { resetForm }) => {
     const registrationDetails = values;
     dispatch(registerUser(registrationDetails));
-
-    setTimeout(() => {
-      if (successMessage) resetForm({ values: "" });
-    }, 2000);
   };
+
+  useEffect(() => {
+    if (successMessage) {
+      formikRef.current?.resetForm();
+    }
+  }, [successMessage]);
 
   return (
     <FormContainer>
@@ -91,6 +94,7 @@ const RegisterScreen = () => {
         initialValues={{ ...INITIAL_REGISTER_FORM_STATE }}
         validationSchema={REGISTER_FORM_VALIDATION}
         onSubmit={submitHandler}
+        innerRef={formikRef}
       >
         <FormikForm>
           <FormFields>

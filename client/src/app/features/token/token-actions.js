@@ -16,6 +16,8 @@ export const getToken = () => {
           ? error.response.data.message
           : error.message;
       // dispatch(userAuthFail(errorMessage));
+
+      localStorage.removeItem("firstLogin");
     }
   };
 };

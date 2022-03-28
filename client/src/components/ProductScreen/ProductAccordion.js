@@ -12,21 +12,10 @@ import Box from "@mui/material/Box";
 ////////////////////////////////////////
 // Components import
 import ProductReviews from "./ProductReviews";
+import { ExpandMoreIconCust, AccordionHeader } from "../Common/Accordion";
 
-/////////////////////////////////////////
-// Styled Components
-import { styled } from "@mui/material/styles";
-
-const ExpandMoreIconCust = styled(ExpandMoreIcon)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: "#fff",
-  borderRadius: "50%",
-}));
-
-const AccordionHeader = styled(Typography)(({ theme }) => ({
-  fontWeight: theme.typography.fontWeightBold,
-}));
-
+////////////////////////////////////////////
+// MAIN Component
 const ProductAccordion = (props) => {
   const { description, reviews, reviewUpdated } = props;
 

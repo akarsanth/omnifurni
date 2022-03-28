@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -13,19 +12,17 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import CloseIcon from "@mui/icons-material/Close";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
-import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 
-//////////////////////////////////
+/////////////////////////////////////
 // Reducer
 const initialState = {
   isLoading: false,
-  orderList: [],
+  orderList: null,
   error: null,
 };
 
@@ -48,11 +45,14 @@ const reducer = (state, action) => {
 ///////////////////////////////////
 // MAIN Component
 const Orders = () => {
+  const dispatchRedux = useDispatch();
+
   // reducers
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isLoading, orderList, error } = state;
 
   const { token } = useSelector((state) => state.token);
+  const [search, setSearch] = useState(true);
   useEffect(() => {
     const getOrderList = async () => {
       try {
@@ -77,12 +77,51 @@ const Orders = () => {
       }
     };
 
-    getOrderList();
-  }, [token]);
+    if (search) {
+      getOrderList();
+      setSearch(false);
+    }
+  }, [token, search]);
 
   // Cancel Order
-  const cancelOrder = (orderId) => {
-    console.log("yet to implement the order cancel feature");
+  const [cancelState, setCancelState] = useState({
+    error: null,
+    isLoading: false,
+  });
+  const cancelOrder = async (orderId) => {
+    console.log(orderId);
+    console.log(token);
+    try {
+      setCancelState({
+        error: null,
+        isLoading: true,
+      });
+
+      await axios.put(
+        `/api/v1/orders/${orderId}/cancel`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // after fetching ORDER LIST
+      setCancelState({
+        error: null,
+        isLoading: false,
+      });
+
+      // Fetching order list again
+      setSearch(true);
+    } catch (error) {
+      setCancelState({
+        error:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+        isLoading: false,
+      });
+    }
   };
 
   return (
@@ -94,7 +133,9 @@ const Orders = () => {
         </Alert>
       )}
 
-      {orderList.length === 0 ? (
+      {orderList === null ? (
+        <></>
+      ) : orderList.length === 0 ? (
         <>
           <Alert severity="info" sx={{ mb: 2 }}>
             You have not made any orders yet!

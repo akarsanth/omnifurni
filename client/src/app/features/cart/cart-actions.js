@@ -5,7 +5,8 @@ import {
   replaceCart,
   addItemToCart,
   removeItemFromCart,
-  updateItemQuantity,
+  increaseItemQuantity,
+  decreaseItemQuantity,
 } from "./cart-slice";
 import { updateSuccessMessage } from "../message/message-slice";
 
@@ -40,8 +41,14 @@ export const removeFromCart = (id) => async (dispatch, getState) => {
   dispatch(updateSuccessMessage("Product removed from cart successfully!"));
 };
 
-export const updateQuantity = (id, qty) => async (dispatch, getState) => {
-  dispatch(updateItemQuantity({ id, qty }));
+export const increaseQuantity = (id) => async (dispatch, getState) => {
+  dispatch(increaseItemQuantity({ id }));
+
+  await localForage.setItem("cartItems", getState().cart.cartItems);
+};
+
+export const decreaseQuantity = (id, qty) => async (dispatch, getState) => {
+  dispatch(decreaseItemQuantity({ id, qty }));
 
   await localForage.setItem("cartItems", getState().cart.cartItems);
 };

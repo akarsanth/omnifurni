@@ -68,6 +68,17 @@ const getMyOrders = asyncHandler(async (req, res) => {
       attributes: {
         exclude: ["user_id", "shipping_address_id"],
       },
+
+      include: [
+        {
+          model: Product,
+          attributes: ["product_id", "name", "price"],
+
+          through: {
+            attributes: ["orderline_id", "quantity"],
+          },
+        },
+      ],
     });
 
     res.json(orders);
@@ -163,6 +174,27 @@ const updatePayment = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    To cancel order
+// @route   PUT /api/v1/orders/:id/cancel
+// @access  Private
+const cancelOrder = asyncHandler(async (req, res) => {
+  console.log("===========================");
+
+  const orderId = req.params.id;
+  const order = await Order.findByPk(orderId);
+
+  if (order) {
+    order.status = "Cancelled";
+
+    const updatedOrder = await order.save();
+
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not found!");
+  }
+});
+
 ////////////////////////////////////////////////////////
 // Admin
 ////////////////////////////////////////////////////////
@@ -212,4 +244,47 @@ const getOrders = asyncHandler(async (req, res) => {
   }
 });
 
-export { getOrderById, getMyOrders, createOrder, updatePayment, getOrders };
+// @desc    To update order
+// @route   PUT /api/v1/orders/:id
+// @access  Private
+const updateOrder = asyncHandler(async (req, res) => {
+  const orderId = req.params.id;
+  const { status } = req.body;
+
+  const order = await Order.findByPk(orderId);
+
+  if (order) {
+    if (status === "Delivered") {
+      order.is_delivered = 1;
+      order.delivered_at = Date.now();
+
+      if (order.payment_method === "COD") {
+        order.is_paid = 1;
+        order.paid_at = Date.now();
+      }
+
+      order.status = status;
+    }
+
+    if (status === "Cancelled") {
+      order.status = status;
+    }
+
+    const updatedOrder = await order.save();
+
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not found!");
+  }
+});
+
+export {
+  getOrderById,
+  getMyOrders,
+  createOrder,
+  updatePayment,
+  cancelOrder,
+  getOrders,
+  updateOrder,
+};

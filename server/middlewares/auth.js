@@ -15,7 +15,6 @@ const auth = asyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
 
       // verifying the token
-
       jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
         if (error)
           return res.status(400).json({ msg: "Invalid Authentication." });

@@ -26,6 +26,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Alert from "@mui/material/Alert";
 import ModalWrapper from "../AddEditModal";
 import MUIButton from "@mui/material/Button";
+import CloseButton from "../Common/CloseButton";
 
 ////////////////////////////////////
 // Reducers
@@ -238,6 +239,7 @@ const CategotyAddEditModal = (props) => {
   return (
     <>
       <ModalWrapper open={open} handleClose={handleClose}>
+        <CloseButton handleClose={handleClose} />
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
           {`${actionType} category details`}
         </Typography>

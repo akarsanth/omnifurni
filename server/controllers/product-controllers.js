@@ -99,7 +99,11 @@ const findProductById = asyncHandler(async (req, res) => {
 const getSearchedProducts = asyncHandler(async (req, res) => {
   const keyword = req.query.keyword.toLowerCase();
 
-  const matchedProducts = await Product.findAll({
+  // Pagination
+  const pageSize = parseInt(req.query.pageSize);
+  const page = req.query.page;
+
+  const count = await Product.count({
     where: {
       name: {
         [Op.like]: `%${keyword}%`,
@@ -107,25 +111,48 @@ const getSearchedProducts = asyncHandler(async (req, res) => {
     },
   });
 
-  res.json(matchedProducts);
+  const matchedProducts = await Product.findAll({
+    where: {
+      name: {
+        [Op.like]: `%${keyword}%`,
+      },
+    },
+
+    limit: pageSize,
+    offset: pageSize * (page - 1),
+  });
+
+  res.json({ matchedProducts, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Find product by catetory
-// @route   GET /api/v1/products?category=[id]
+// @route   GET /api/v1/products/category/:id?page=[page]
 // @access  Public
 const findProductsByCategory = asyncHandler(async (req, res) => {
   const categoryId = req.params.id;
 
-  const product = await Product.findAll({
+  // Pagination
+  const pageSize = parseInt(req.query.pageSize);
+  const page = req.query.page;
+
+  const count = await Product.count({
     where: {
       category_id: categoryId,
     },
   });
 
+  const products = await Product.findAll({
+    where: {
+      category_id: categoryId,
+    },
+    limit: pageSize,
+    offset: pageSize * (page - 1),
+  });
+
   // // if product is found
   // // if id is formatted validly
-  if (product) {
-    return res.json(product);
+  if (products) {
+    return res.json({ products, pages: Math.ceil(count / pageSize) });
   } else {
     // not found error code
     res.status(404);

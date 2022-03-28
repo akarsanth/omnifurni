@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Link as RouterLink } from "react-router-dom";
 
+import { useSelector } from "react-redux";
+
 /////////////////////////////////////////
 // MUI Components
 import Box from "@mui/material/Box";
@@ -41,7 +43,7 @@ const reducer = (state, action) => {
   }
 };
 
-/////////////////////////////////////
+////////////////////////////////////////
 // MAIN COMPONENT
 const ProductScreen = () => {
   const [qty, setQty] = useState(1);
@@ -54,10 +56,12 @@ const ProductScreen = () => {
 
   // If there is change in the product details (i.e review)
   const [changed, setChanged] = useState(false);
+  const token = useSelector((state) => state.token);
   useEffect(() => {
     const getProductDetails = async () => {
       try {
         dispatch({ type: "PRODUCT_DETAILS_REQUEST" });
+
         const { data } = await axios.get(`/api/v1/products/${params.id}`);
 
         // after fetching product with specified id
