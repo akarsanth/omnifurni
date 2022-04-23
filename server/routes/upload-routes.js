@@ -50,7 +50,7 @@ router.post("/", upload.single("image"), (req, res) => {
 });
 
 // @desc    To delete uploaded image
-// @route   GET api/v1/upload
+// @route   GET api/v1/upload/delete
 // @access  Public
 router.post(
   "/delete",
@@ -58,14 +58,10 @@ router.post(
     try {
       const filePath = req.body.imagePath;
 
-      console.log(filePath);
-
       const file = filePath.substring(
         filePath.lastIndexOf("/") + 1,
         filePath.length
       );
-
-      console.log("File to delete", file);
 
       await fs.remove(`uploads/${file}`);
 

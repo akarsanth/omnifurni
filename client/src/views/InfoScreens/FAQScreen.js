@@ -53,7 +53,7 @@ const FAQScreen = () => {
           <AccordionDetails
             sx={{ borderTop: 1, borderColor: "grey.100", py: 3 }}
           >
-            <Typography variant="body2">
+            <Typography>
               The payment methods that are currently available are COD (Cash On
               Delivery) and Khalti Digital Wallet.
             </Typography>
@@ -70,7 +70,7 @@ const FAQScreen = () => {
             <AccordionHeader>Can I cancel my order?</AccordionHeader>
           </AccordionSummary>
           <AccordionDetails sx={{ borderTop: 1, borderColor: "grey.100" }}>
-            <Typography variant="body2">
+            <Typography>
               Yes, you can cancel your order, but only if you have not selected
               the payment method for that particular order. However, if you want
               to cancel your order even after selection of payment method (COD
@@ -107,24 +107,24 @@ const FAQScreen = () => {
             id="panel2a-header"
             sx={{ borderLeft: 4, borderColor: "primary.main" }}
           >
-            <AccordionHeader>Reviews</AccordionHeader>
+            <AccordionHeader>How to track my order?</AccordionHeader>
           </AccordionSummary>
           <AccordionDetails sx={{ borderTop: 1, borderColor: "grey.100" }}>
-            <Typography variant="body2">Description</Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIconCust />}
-            aria-controls="panel2a-content"
-            id="panel2a-header"
-            sx={{ borderLeft: 4, borderColor: "primary.main" }}
-          >
-            <AccordionHeader>Reviews</AccordionHeader>
-          </AccordionSummary>
-          <AccordionDetails sx={{ borderTop: 1, borderColor: "grey.100" }}>
-            <Typography variant="body2">Description</Typography>
+            <Typography fontWeight={600} sx={{ mb: 1 }}>
+              There are four types of stages of a order:
+            </Typography>
+            <Typography>
+              1. Payment Pending: Which indicates that payment method has not
+              been selected.
+            </Typography>
+            <Typography>
+              2. Order Completed: Which indicates that the order is completed.
+              (After payment method is selected)
+            </Typography>
+            <Typography>
+              3. Delivered: The order is delivered successfully.
+            </Typography>
+            <Typography>4. Cancelled: The order has been cancelled.</Typography>
           </AccordionDetails>
         </Accordion>
       </Box>

@@ -28,10 +28,10 @@ const getOrderById = asyncHandler(async (req, res) => {
     include: [
       {
         model: Product,
-        attributes: ["product_id", "name", "price"],
+        attributes: ["product_id", "name"],
 
         through: {
-          attributes: ["orderline_id", "quantity"],
+          attributes: ["orderline_id", "quantity", "line_total"],
         },
       },
 
@@ -87,8 +87,8 @@ const getMyOrders = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Get logged in user orders
-// @route   GET /api/v1/orders/myorders
+// @desc    To create order
+// @route   POST /api/v1/orders
 // @access  Private
 const createOrder = asyncHandler(async (req, res) => {
   try {
@@ -138,12 +138,26 @@ const createOrder = asyncHandler(async (req, res) => {
         order_id: createdOrder.order_id,
         product_id: item.product_id,
         quantity: item.qty,
+        line_total: item.qty * item.price,
       };
     });
 
-    console.log(newOrderItems);
-
     await OrderLine.bulkCreate(newOrderItems);
+
+    // Updating stock
+    for (const item of newOrderItems) {
+      const product = await Product.findOne({
+        where: {
+          product_id: item.product_id,
+        },
+      });
+
+      if (product) {
+        product.countInStock -= item.quantity;
+
+        await product.save();
+      }
+    }
 
     res.status(201).json(createdOrder);
   } catch (error) {
@@ -151,7 +165,7 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    To update payment status (after user makes payment)
+// @desc    To update payment status (after user selects payment method)
 // @route   PUT /api/v1/orders/:id/pay
 // @access  Private
 const updatePayment = asyncHandler(async (req, res) => {
@@ -178,8 +192,6 @@ const updatePayment = asyncHandler(async (req, res) => {
 // @route   PUT /api/v1/orders/:id/cancel
 // @access  Private
 const cancelOrder = asyncHandler(async (req, res) => {
-  console.log("===========================");
-
   const orderId = req.params.id;
   const order = await Order.findByPk(orderId);
 
@@ -187,6 +199,44 @@ const cancelOrder = asyncHandler(async (req, res) => {
     order.status = "Cancelled";
 
     const updatedOrder = await order.save();
+
+    // Changing stock
+    const orderStock = await Order.findOne({
+      where: {
+        order_id: orderId,
+      },
+
+      attributes: [],
+
+      // include
+      include: [
+        {
+          model: Product,
+          attributes: ["product_id"],
+
+          through: {
+            attributes: ["quantity"],
+          },
+        },
+      ],
+    });
+
+    const { products } = orderStock;
+
+    // Updating stock
+    for (const item of products) {
+      const product = await Product.findOne({
+        where: {
+          product_id: item.product_id,
+        },
+      });
+
+      if (product) {
+        product.countInStock += item.order_line.quantity;
+
+        await product.save();
+      }
+    }
 
     res.json(updatedOrder);
   } else {
@@ -203,10 +253,6 @@ const cancelOrder = asyncHandler(async (req, res) => {
 // @route   PUT /api/orders
 // @access  Private
 const getOrders = asyncHandler(async (req, res) => {
-  console.log("===========================");
-  console.log(req.params.from);
-  console.log(req.params.to);
-
   const orders = await Order.findAll({
     where: {
       createdAt: {
@@ -224,10 +270,10 @@ const getOrders = asyncHandler(async (req, res) => {
     include: [
       {
         model: Product,
-        attributes: ["product_id", "name", "price"],
+        attributes: ["product_id", "name"],
 
         through: {
-          attributes: ["orderline_id", "quantity"],
+          attributes: ["orderline_id", "quantity", "line_total"],
         },
       },
 
@@ -268,6 +314,40 @@ const updateOrder = asyncHandler(async (req, res) => {
 
     if (status === "Cancelled") {
       order.status = status;
+
+      // Changing stock
+      const orderStock = await Order.findOne({
+        where: {
+          order_id: orderId,
+        },
+
+        attributes: [],
+
+        // include
+        include: [
+          {
+            model: Product,
+            attributes: ["product_id"],
+
+            through: {
+              attributes: ["quantity"],
+            },
+          },
+        ],
+      });
+
+      const { products } = orderStock;
+
+      // Updating stock
+      for (const item of products) {
+        const product = await Product.findByPk(item.product_id);
+
+        if (product) {
+          product.countInStock += item.order_line.quantity;
+
+          await product.save();
+        }
+      }
     }
 
     const updatedOrder = await order.save();

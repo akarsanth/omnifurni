@@ -140,7 +140,9 @@ const ProductReviews = (props) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      let result;
+      console.log(data);
+
+      let result = false;
       data.forEach((order) => {
         if (order.status === "Delivered") {
           order.products.forEach((product) => {
@@ -151,6 +153,8 @@ const ProductReviews = (props) => {
           });
         }
       });
+
+      console.log(result);
 
       setUserHasBought(result ? result : false);
     };
@@ -202,7 +206,7 @@ const ProductReviews = (props) => {
         )}
       </Box>
 
-      {userInfo ? (
+      {userInfo && userInfo.isAdmin === false ? (
         <>
           {userHasBought === null ? (
             <></>

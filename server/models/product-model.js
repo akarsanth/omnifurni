@@ -21,7 +21,7 @@ export default (sequelize, Sequelize) => {
       },
 
       price: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL,
         allowNull: false,
       },
 
@@ -51,6 +51,7 @@ export default (sequelize, Sequelize) => {
       featured: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
+        allowNull: false,
       },
     },
 

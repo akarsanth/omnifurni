@@ -70,9 +70,6 @@ const CategoryScreen = () => {
       try {
         dispatch({ type: "REQUEST" });
 
-        console.log(pageSize);
-        console.log(page);
-
         const { data } = await axios.get(
           `/api/v1/products/category/${params.id}?page=${page}&pageSize=${pageSize}`
         );
@@ -255,8 +252,9 @@ const CategoryScreen = () => {
               sx={{
                 display: "flex",
                 justifyContent: "center",
+                flexWrap: "wrap",
                 alignItems: "center",
-                gap: 6,
+                gap: 5,
                 pt: 8,
               }}
             >

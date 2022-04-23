@@ -42,7 +42,7 @@ const reducer = (state, action) => {
   }
 };
 
-///////////////////////////////////
+///////////////////////////////////////////
 // MAIN Component
 const Orders = () => {
   const dispatchRedux = useDispatch();
@@ -89,8 +89,6 @@ const Orders = () => {
     isLoading: false,
   });
   const cancelOrder = async (orderId) => {
-    console.log(orderId);
-    console.log(token);
     try {
       setCancelState({
         error: null,
@@ -161,9 +159,7 @@ const Orders = () => {
                   <TableCell>DATE</TableCell>
                   <TableCell>TOTAL</TableCell>
                   <TableCell>STATUS</TableCell>
-                  {/* <TableCell>PAID</TableCell>
-                  <TableCell>DELIVERED</TableCell> */}
-                  <TableCell sx={{ pr: 0 }}>ACTION</TableCell>
+                  <TableCell sx={{ pr: 0 }}>ACTION(s)</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -181,7 +177,15 @@ const Orders = () => {
                     <TableCell>{order.createdAt.substring(0, 10)}</TableCell>
                     <TableCell>{`NPR ${order.total_amount}`}</TableCell>
                     <TableCell>
-                      <Chip label={order.status} />
+                      {order.status === "Cancelled" ? (
+                        <Chip
+                          variant="outlined"
+                          color="error"
+                          label={order.status}
+                        />
+                      ) : (
+                        <Chip variant="outlined" label={order.status} />
+                      )}
                     </TableCell>
 
                     {/* <TableCell>

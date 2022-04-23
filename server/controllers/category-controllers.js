@@ -8,9 +8,12 @@ const Product = db.product;
 // @route   GET api/v1/categories
 // @access  Public (anything can hit it)
 const findAllCategories = asyncHandler(async (req, res) => {
-  const categories = await Category.findAll();
-
-  res.json(categories);
+  try {
+    const categories = await Category.findAll();
+    res.json(categories);
+  } catch (err) {
+    throw new Error("Error while fetching products!");
+  }
 });
 
 // @desc    To get user info

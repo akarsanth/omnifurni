@@ -80,6 +80,11 @@ const columns = [
     field: "description",
     filtering: false,
     width: "30%",
+    render: (rowData) => {
+      return rowData.description.length < 70
+        ? rowData.description
+        : `${rowData.description.substring(0, 70)}...`;
+    },
   },
 
   {

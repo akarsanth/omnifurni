@@ -28,6 +28,7 @@ const ActiveStepText = styled(Typography)(({ theme }) => ({
 const StepBox = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
+  flexWrap: "wrap",
   alignItems: "center",
   gap: theme.spacing(3),
   marginTop: theme.spacing(6),

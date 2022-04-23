@@ -113,14 +113,14 @@ function App() {
       // To get Access token
       dispatch(getToken());
     }
-  }, [isAuthenticated, dispatch]);
+  }, [isAuthenticated, dispatch, userInfo]);
 
   useEffect(() => {
     // if token is present
     if (token && !userInfo) {
       dispatch(fetchAuthUser(token));
     }
-  }, [token, dispatch]);
+  }, [token, dispatch, userInfo]);
 
   return (
     <ThemeProvider theme={theme}>

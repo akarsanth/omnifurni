@@ -21,7 +21,7 @@ export default (sequelize, Sequelize) => {
       },
 
       contact_number: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
       },
 

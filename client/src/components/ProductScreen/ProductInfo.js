@@ -32,7 +32,7 @@ import styled from "styled-components";
 const ProductImage = styled.img`
   max-width: 100%;
   min-width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   height: 500px;
 `;
 

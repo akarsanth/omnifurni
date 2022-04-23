@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 /////////////////////////////////////////
@@ -10,6 +10,9 @@ import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import HomeIcon from "@mui/icons-material/Home";
 
 /////////////////////////////////////
 // Custom Components
@@ -20,7 +23,6 @@ import FilterPanel from "../components/Filter/FilterPanel";
 import Pagination from "@mui/material/Pagination";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import FormControl from "@mui/material/FormControl";
 
 const initialState = {
   isLoading: false,
@@ -154,7 +156,7 @@ const SearchScreen = () => {
   }, [selectedRating, selectedPrice, productList]);
 
   return (
-    <Container sx={{ pt: 10, pb: 10 }}>
+    <Container sx={{ pt: 5, pb: 10 }}>
       {isLoading && <CircularProgress />}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -163,6 +165,19 @@ const SearchScreen = () => {
       )}
 
       <Box>
+        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 8 }}>
+          <Link
+            sx={{ display: "flex", alignItems: "center" }}
+            underline="hover"
+            color="inherit"
+            component={RouterLink}
+            to="/"
+          >
+            <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+            HOME
+          </Link>
+        </Breadcrumbs>
+
         <CustomizedGrid container spacing={4} columns={{ xs: 1, md: 10 }}>
           <Grid item xs={1} md={3}>
             <Box
@@ -227,7 +242,8 @@ const SearchScreen = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                gap: 6,
+                flexWrap: "wrap",
+                gap: 5,
                 pt: 8,
               }}
             >

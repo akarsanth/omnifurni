@@ -292,9 +292,12 @@ const CategotyAddEditModal = (props) => {
                   <input type="file" hidden onChange={handleUploadImage} />
                 </MUIButton>
               </Box>
-              <Typography variant="body2">
-                Upload new image to edit the edit the image as well!
-              </Typography>
+
+              {actionType === "Edit" && (
+                <Typography variant="body2">
+                  Upload new image to edit the image as well!
+                </Typography>
+              )}
 
               <Button
                 color="secondary"

@@ -25,6 +25,11 @@ export default (sequelize, Sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+
+      line_total: {
+        type: DataTypes.DECIMAL,
+        allowNull: false,
+      },
     },
 
     {

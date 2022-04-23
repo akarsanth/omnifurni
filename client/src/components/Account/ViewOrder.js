@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -125,7 +125,11 @@ const ViewOrder = () => {
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 4 }}>
             <Typography>Status:</Typography>
-            <Chip variant="outlined" label={order.status} />
+            {order.status === "Cancelled" ? (
+              <Chip variant="outlined" color="error" label={order.status} />
+            ) : (
+              <Chip variant="outlined" label={order.status} />
+            )}
           </Box>
 
           <Box sx={{ mb: 4 }}>
@@ -160,7 +164,7 @@ const ViewOrder = () => {
                               <Typography variant="body2">{`${product.name} x ${product.order_line.quantity}`}</Typography>
                             </Link>
                             <Typography variant="body2">
-                              NPR {product.price * product.order_line.quantity}
+                              NPR {product.order_line.line_total}
                             </Typography>
                           </TableCellBox>
                         );

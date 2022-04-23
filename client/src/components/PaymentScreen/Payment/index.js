@@ -191,7 +191,7 @@ const Payment = ({ value, orderId, amount }) => {
             )
           }
         >
-          Proceed to Payment
+          Confirm Payment
         </LoadingButton>
       )}
 

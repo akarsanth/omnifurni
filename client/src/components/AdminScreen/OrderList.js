@@ -281,7 +281,7 @@ const OrderListScreen = () => {
 
                   <Box sx={{ mb: 5 }}>
                     <Typography fontWeight={700} sx={{ mb: 2 }}>
-                      Products
+                      Ordered Products
                     </Typography>
                     <TableContainer
                       component={Box}
@@ -297,7 +297,7 @@ const OrderListScreen = () => {
                             <TableCell>Product ID</TableCell>
                             <TableCell>Product Name</TableCell>
                             <TableCell>Quantity</TableCell>
-                            <TableCell>Price</TableCell>
+                            <TableCell>Line Total</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -335,7 +335,9 @@ const OrderListScreen = () => {
                               <TableCell>
                                 {product.order_line.quantity}
                               </TableCell>
-                              <TableCell>{product.price}</TableCell>
+                              <TableCell>
+                                {product.order_line.line_total}
+                              </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

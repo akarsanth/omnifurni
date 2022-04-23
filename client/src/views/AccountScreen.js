@@ -83,7 +83,6 @@ const AccountScreen = () => {
   useEffect(() => {
     // getting the current path from the url
     const list = location.pathname.split("/")[2];
-    console.log(list);
 
     if (list) {
       setSelectedList(locationList[list].text);
