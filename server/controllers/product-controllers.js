@@ -236,6 +236,8 @@ const findAllProducts = asyncHandler(async (req, res) => {
         [db.sequelize.col("category.name"), "category_name"],
       ],
 
+      order: [["createdAt", "DESC"]],
+
       include: {
         model: Category,
         as: "category",
@@ -380,7 +382,9 @@ const updateProduct = asyncHandler(async (req, res) => {
     });
   } catch (err) {
     res.status(500);
-    throw new Error("Product could not be updated at this moment. Try Again!");
+    throw new Error(
+      "Error occured while trying to update the product. Try Again!"
+    );
   }
 });
 

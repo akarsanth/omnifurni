@@ -15,8 +15,8 @@ dotenv.config();
 import { notFound, errorHandler } from "./middlewares/error-middlewares.js";
 
 // db connection from index.js file
-// import db from "./models/index.js";
-import("./config/passportJWT-setup.js");
+import("./models/index.js");
+// import("./config/passportJWT-setup.js");
 
 // create app through express
 const app = express();

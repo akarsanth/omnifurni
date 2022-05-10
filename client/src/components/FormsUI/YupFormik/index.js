@@ -167,6 +167,7 @@ export const PRODUCT_ADD_EDIT_VALIDATION = Yup.object().shape({
   price: Yup.number()
     .required("Price is a required Field")
     .typeError("Invalid entry")
+    .max(99999999.99)
     .positive(),
   countInStock: Yup.number()
     .required("Count In Stock is a required Field")

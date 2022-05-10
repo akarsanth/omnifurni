@@ -69,6 +69,8 @@ const getMyOrders = asyncHandler(async (req, res) => {
         exclude: ["user_id", "shipping_address_id"],
       },
 
+      order: [["createdAt", "DESC"]],
+
       include: [
         {
           model: Product,

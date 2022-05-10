@@ -33,7 +33,7 @@ const links = [
 /////////////////////////////////////
 // MAIN Component
 const Dashboard = () => {
-  const { first_name, last_name } = useSelector(
+  const { first_name, last_name, email } = useSelector(
     (state) => state.authUser.userInfo
   );
 
@@ -41,7 +41,9 @@ const Dashboard = () => {
     <Box>
       <Typography sx={{ pb: 2 }}>
         Hello{" "}
-        <span style={{ fontWeight: 700 }}>{`${first_name} ${last_name}!`}</span>
+        <span
+          style={{ fontWeight: 700 }}
+        >{`${first_name} ${last_name}! (${email})`}</span>
       </Typography>
 
       <Typography variant="body2">

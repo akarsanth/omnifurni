@@ -26,9 +26,6 @@ const OrderCompleteScreen = () => {
 
   useEffect(() => {
     if (location.state) {
-      console.log(location.state.from);
-      console.log(location.state.orderId);
-
       setFrom(location.state.from);
       setOrderId(location.state.orderId);
     } else {

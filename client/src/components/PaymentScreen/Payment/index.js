@@ -123,6 +123,7 @@ const Payment = ({ value, orderId, amount }) => {
         axios
           .get(`/api/v1/khalti/verify/${data.token}/${data.amount}`)
           .then((response) => {
+            console.log(response);
             setKhaltiState({
               error: "",
               loading: false,

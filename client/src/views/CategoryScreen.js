@@ -274,6 +274,7 @@ const CategoryScreen = () => {
                   value={pageSize}
                   onChange={(event) => setPageSize(event.target.value)}
                   size="small"
+                  disabled={list.length < 10}
                 >
                   <MenuItem value={10}>10</MenuItem>
                   <MenuItem value={15}>15</MenuItem>

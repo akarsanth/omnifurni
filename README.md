@@ -14,9 +14,11 @@ Final Year Project Furniture Shop eCommerce Web Application
 
 # oAuth Playground Link
 
+https://developers.google.com/oauthplayground/
+
 // Enter this credentials
-MAILING_SERVICE_CLIENT_ID = 922790008268-kd92ak8ai2dn6lt8ufpace9jkluamuer.apps.googleusercontent.com
-MAILING_SERVICE_CLIENT_SECRET = GOCSPX-Nj5XlJeoB3OkxH-\_tei3t8hzKo-5
+MAILING_SERVICE_CLIENT_ID = 2777188308-vt6g66p7v23e9almgus3aj0nu3utgof1.apps.googleusercontent.com
+MAILING_SERVICE_CLIENT_SECRET = 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
 
 https://mail.google.com
 

@@ -29,7 +29,7 @@ const checkFileType = (file, cb) => {
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb("Images only!");
+    cb(null, false);
   }
 };
 
@@ -44,10 +44,20 @@ const upload = multer({
 // @desc    To upload image
 // @route   GET api/v1/upload
 // @access  Public
-router.post("/", upload.single("image"), (req, res) => {
-  // After successful upload (send the file path)
-  res.send(`/${req.file.path.replace("\\", "/")}`);
-});
+router.post(
+  "/",
+  upload.single("image"),
+  asyncHandler(async (req, res) => {
+    // After successful upload (send the file path)
+    if (!req.file) {
+      res.status(400);
+      throw new Error(
+        "No file received or invalid image file type! Image type must be one of the following (jpg|jpeg|png)"
+      );
+    }
+    res.send(`/${req.file.path.replace("\\", "/")}`);
+  })
+);
 
 // @desc    To delete uploaded image
 // @route   GET api/v1/upload/delete

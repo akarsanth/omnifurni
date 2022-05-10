@@ -63,7 +63,6 @@ const LoginScreen = () => {
   useEffect(() => {
     if (userInfo) {
       if (location.state?.from) {
-        console.log(location.state.from);
         navigate(location.state.from);
       } else {
         navigate("/");

@@ -207,7 +207,11 @@ const AddressAddEditModal = (props) => {
           </FormikForm>
         </Formik>
 
-        {error && <Alert sererity="error">{error}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
       </ModalWrapper>
     </>
   );

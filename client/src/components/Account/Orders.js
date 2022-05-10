@@ -188,28 +188,6 @@ const Orders = () => {
                       )}
                     </TableCell>
 
-                    {/* <TableCell>
-                      <Box
-                        sx={{ display: "flex", gap: 1, alignItems: "center" }}
-                      >
-                        {order.is_paid === 1 ? (
-                          order.paid_at.substring(0, 10)
-                        ) : (
-                          <CloseIcon sx={{ color: "error.main" }} />
-                        )}
-
-                        {order.payment_method === "COD" && (
-                          <Chip label="COD" sx={{ alignSelf: "flex-start" }} />
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      {order.is_delivered == 1 ? (
-                        order.delivered_at.substring(0, 10)
-                      ) : (
-                        <CloseIcon sx={{ color: "error.main" }} />
-                      )}
-                    </TableCell> */}
                     <TableCell sx={{ display: "flex", gap: 0.5, pr: 0 }}>
                       <Link
                         to={`/account/vieworder/${order.order_id}`}

@@ -21,7 +21,7 @@ export default (sequelize, Sequelize) => {
       },
 
       price: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10, 0),
         allowNull: false,
       },
 

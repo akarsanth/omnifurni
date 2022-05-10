@@ -64,7 +64,7 @@ const CartScreen = () => {
         >
           <Typography sx={{ mb: 2 }}>Your cart is currently empty!</Typography>
           <Link to="/" component={RouterLink} underline="none">
-            <Button variant="outlined">Continue Shipping</Button>
+            <Button variant="outlined">Continue Shopping</Button>
           </Link>
         </Box>
       ) : (
