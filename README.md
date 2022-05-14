@@ -2,10 +2,6 @@
 
 Final Year Project Furniture Shop eCommerce Web Application
 
-# things to add in final report
-
-1. API endpoints
-
 # Dependencies (Modules) used to send email
 
 1. Email JS => For contact us form. EmailJS helps to send emails using client-side technologies only
@@ -21,5 +17,4 @@ MAILING_SERVICE_CLIENT_ID = 2777188308-vt6g66p7v23e9almgus3aj0nu3utgof1.apps.goo
 MAILING_SERVICE_CLIENT_SECRET = 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
 
 https://mail.google.com
-
 // Take the refresh token and update the env file
