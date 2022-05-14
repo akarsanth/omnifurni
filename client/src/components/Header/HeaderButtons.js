@@ -8,16 +8,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 
-/////////////////////////////////
-// Styled Components
-import { styled } from "@mui/material/styles";
-
-// const ButtonsBox = styled(Box)(({ theme }) => ({
-//   [theme.breakpoints.down("sm")]: {
-//     display: "none",
-//   },
-// }));
-
 const HeaderButtons = () => {
   return (
     <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2 }}>

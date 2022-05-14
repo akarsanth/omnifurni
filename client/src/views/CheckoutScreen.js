@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import axios from "axios";
 import localForage from "localforage";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 ///////////////////////////////////////
 // Redux Related
@@ -69,7 +69,7 @@ const CheckoutScreen = () => {
   const dispatchRedux = useDispatch();
   const navigate = useNavigate();
 
-  const { cartItems, totalQuantity, shippingAddress, total } = useSelector(
+  const { cartItems, shippingAddress, total } = useSelector(
     (state) => state.cart
   );
 

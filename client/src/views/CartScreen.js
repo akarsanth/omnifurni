@@ -4,10 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 ///////////////////////////////////////
 // Redux Related
 import { useDispatch, useSelector } from "react-redux";
-import {
-  removeFromCart,
-  updateQuantity,
-} from "../app/features/cart/cart-actions";
+import { removeFromCart } from "../app/features/cart/cart-actions";
 
 //////////////////////////////////////
 // Custom Components
@@ -41,9 +38,7 @@ import Typography from "@mui/material/Typography";
 // MAIN COMPONENT
 const CartScreen = () => {
   const dispatch = useDispatch();
-  const { cartItems, totalQuantity, total } = useSelector(
-    (state) => state.cart
-  );
+  const { cartItems, total } = useSelector((state) => state.cart);
 
   const removeFromCartHandler = (id) => {
     dispatch(removeFromCart(id));

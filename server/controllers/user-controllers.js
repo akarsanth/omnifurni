@@ -54,16 +54,6 @@ const registerUser = asyncHandler(async (req, res) => {
   res.json({
     message: `Please check your email "${email}" account for verification link to activate your account!`,
   });
-
-  // // creating new user
-  // const savedUser = await User.create(user).catch((err) => {
-  //   console.log("Error: ", err);
-  //   // internal server error status code
-  //   res.status(500);
-  //   throw new Error("Cannot register user at the moment!");
-  // });
-
-  // if (savedUser) res.json({ message: "User Registered Successfully!" });
 });
 
 // @desc    To activate user

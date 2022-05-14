@@ -14,6 +14,7 @@ import {
 // Component Import
 import FormFields from "../../FormsUI/FormFieldsWrapper";
 import Textfield from "../../FormsUI/Textfield";
+import TextfieldPw from "../../FormsUI/Textfield/TextFieldPw";
 import Button from "../../FormsUI/Button";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Message from "../../Message";
@@ -22,10 +23,6 @@ import Message from "../../Message";
 // MUI Components
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import InputAdornment from "@mui/material/InputAdornment";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import IconButton from "@mui/material/IconButton";
 import Alert from "@mui/material/Alert";
 
 ////////////////////////////////////
@@ -56,31 +53,6 @@ const updatePasswordReducer = (state, action) => {
 ////////////////////////////////////
 // MAIN COMPONENT
 const PasswordUpdate = () => {
-  // For password fields
-  const [values, setValues] = React.useState({
-    showCurrentPassword: false,
-    showNewPassword: false,
-    showConfirmNewPassword: false,
-  });
-  const handleClickShowCurrentPassword = () => {
-    setValues({
-      ...values,
-      showCurrentPassword: !values.showCurrentPassword,
-    });
-  };
-  const handleClickShowNewPassword = () => {
-    setValues({
-      ...values,
-      showNewPassword: !values.showNewPassword,
-    });
-  };
-  const handleClickShowConfirmNewPassword = () => {
-    setValues({
-      ...values,
-      showConfirmNewPassword: !values.showConfirmNewPassword,
-    });
-  };
-
   // Password Update Reducer
   const [state, dispatch] = useReducer(updatePasswordReducer, initialState);
   const { isLoading, error, success } = state;
@@ -134,79 +106,18 @@ const PasswordUpdate = () => {
       >
         <FormikForm>
           <FormFields>
-            <Textfield
+            <TextfieldPw
               label="Current Password"
               name="currentPassword"
-              type={values.showCurrentPassword ? "text" : "password"}
               required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle current password visibility"
-                      onClick={handleClickShowCurrentPassword}
-                      // onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {values.showCurrentPassword ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
             />
 
-            <Textfield
-              label="New Password"
-              name="newPassword"
-              required
-              type={values.showNewPassword ? "text" : "password"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle new password visibility"
-                      onClick={handleClickShowNewPassword}
-                      // onMouseDown={handleMouseDownConfirmPassword}
-                      edge="end"
-                    >
-                      {values.showNewPassword ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <TextfieldPw label="New Password" name="newPassword" required />
 
-            <Textfield
+            <TextfieldPw
               label="Confirm New Password"
               name="confirmNewPassword"
               required
-              type={values.showConfirmNewPassword ? "text" : "password"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle confirm new password visibility"
-                      onClick={handleClickShowConfirmNewPassword}
-                      // onMouseDown={handleMouseDownConfirmPassword}
-                      edge="end"
-                    >
-                      {values.showConfirmNewPassword ? (
-                        <VisibilityOff />
-                      ) : (
-                        <Visibility />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
             />
 
             <Button

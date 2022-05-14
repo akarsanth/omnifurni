@@ -7,11 +7,8 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Rating from "@mui/material/Rating";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
 import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
 

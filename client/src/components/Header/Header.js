@@ -46,7 +46,6 @@ import logo from "../../assets/omnifurni.png";
 // Styled Components
 import { styled } from "@mui/material/styles";
 import AdminMenu from "./AdminMenu";
-import { categoryListSuccess } from "../../app/features/category/categoryList-slice";
 
 const BrandLogo = styled("img")`
   height: 50px;
@@ -85,8 +84,6 @@ const Header = () => {
   const { isAuthenticated, userInfo } = useSelector((state) => state.authUser);
 
   const { totalQuantity } = useSelector((state) => state.cart);
-
-  const { token } = useSelector((state) => state.token);
 
   // For category menu
   const { categories } = useSelector((state) => state.categoryList);

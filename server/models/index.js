@@ -37,8 +37,6 @@ import Review from "./review-model.js";
 import Order from "./order-model.js";
 import OrderLine from "./orderline-model.js";
 import ShippingAddress from "./shippingAddress-model.js";
-import Cart from "./cart-model.js";
-import CartLine from "./cartline-model.js";
 
 /////////////////////////////////////////////
 // tables
@@ -50,8 +48,6 @@ db.review = Review(sequelize, Sequelize);
 db.order = Order(sequelize, Sequelize);
 db.orderLine = OrderLine(sequelize, Sequelize);
 db.shippingAddress = ShippingAddress(sequelize, Sequelize);
-// db.cart = Cart(sequelize, Sequelize);
-// db.cartLine = CartLine(sequelize, Sequelize);
 
 //////////////////////////////////////////////
 // Relationship between user and default address
@@ -124,26 +120,6 @@ db.shippingAddress.hasOne(db.order, {
 db.order.belongsTo(db.shippingAddress, {
   foreignKey: "shipping_address_id",
 });
-
-// Relationship between cart and (product, user)
-// with user
-// Changed below
-// db.user.hasOne(db.cart, {
-//   foreignKey: "user_id",
-// });
-// db.cart.belongsTo(db.user, {
-//   foreignKey: "user_id",
-// });
-// // with product
-// db.product.belongsToMany(db.cart, {
-//   through: db.cartLine,
-//   foreignKey: "product_id",
-// });
-
-// db.cart.belongsToMany(db.product, {
-//   through: db.cartLine,
-//   foreignKey: "cart_id",
-// });
 
 //////////////////////////////////////////////
 // to sync database

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink, useParams, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import axios from "axios";
 
 ///////////////////////////////////////////
@@ -24,7 +24,6 @@ import Fade from "@mui/material/Fade";
 import FormContainer, { FormLink } from "../components/FormsUI/FormContainer";
 
 function ActivationEmail() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   // token from url
   const { activationToken } = useParams();

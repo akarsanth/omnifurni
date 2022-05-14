@@ -3,8 +3,6 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Link as RouterLink } from "react-router-dom";
 
-import { useSelector } from "react-redux";
-
 /////////////////////////////////////////
 // MUI Components
 import Box from "@mui/material/Box";
@@ -56,7 +54,6 @@ const ProductScreen = () => {
 
   // If there is change in the product details (i.e review)
   const [changed, setChanged] = useState(false);
-  const token = useSelector((state) => state.token);
   useEffect(() => {
     const getProductDetails = async () => {
       try {

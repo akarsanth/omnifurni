@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -14,6 +14,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
@@ -45,8 +46,6 @@ const reducer = (state, action) => {
 ///////////////////////////////////////////
 // MAIN Component
 const Orders = () => {
-  const dispatchRedux = useDispatch();
-
   // reducers
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isLoading, orderList, error } = state;
@@ -128,6 +127,11 @@ const Orders = () => {
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
+        </Alert>
+      )}
+      {cancelState.error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {cancelState.error}
         </Alert>
       )}
 
@@ -217,14 +221,15 @@ const Orders = () => {
                             </Button>
                           </Link>
 
-                          <Button
+                          <LoadingButton
                             sx={{ display: "inline-block" }}
                             variant="outlined"
                             color="primary"
                             onClick={() => cancelOrder(order.order_id)}
+                            loading={cancelState.isLoading}
                           >
                             Cancel
-                          </Button>
+                          </LoadingButton>
                         </>
                       )}
                     </TableCell>
