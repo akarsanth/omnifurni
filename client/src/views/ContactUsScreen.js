@@ -55,6 +55,12 @@ const reducer = (state, action) => {
   }
 };
 
+const {
+  REACT_APP_EMAILJS_SERVICEID,
+  REACT_APP_EMAILJS_TEMPLATEID,
+  REACT_APP_EMAILJS_PUBLIC_KEY,
+} = process.env;
+
 /////////////////////////////////////
 // MAIN COMPONENT
 const ContactUsScreen = () => {
@@ -73,10 +79,10 @@ const ContactUsScreen = () => {
       dispatch({ type: "REQUEST" });
 
       emailjs.send(
-        "service_mdld8xi",
-        "template_2wys0m7",
+        REACT_APP_EMAILJS_SERVICEID,
+        REACT_APP_EMAILJS_TEMPLATEID,
         values,
-        "user_EzaOgTRTi72NSGTxhD3TZ"
+        REACT_APP_EMAILJS_PUBLIC_KEY
       );
 
       dispatch({ type: "SUCCESS" });

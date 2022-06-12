@@ -27,7 +27,7 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 // app.use(express.urlencoded({ extended: true }));
 
-// morgan, helmet and cors
+// morgan, helmet, cors, and cookie parser
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());

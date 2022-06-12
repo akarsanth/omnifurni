@@ -278,7 +278,6 @@ const CategoryScreen = () => {
                 >
                   <MenuItem value={10}>10</MenuItem>
                   <MenuItem value={15}>15</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
                 </Select>
                 <Typography variant="subtitle2">per page</Typography>
               </Box>
