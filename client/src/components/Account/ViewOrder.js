@@ -161,7 +161,14 @@ const ViewOrder = () => {
                               component={RouterLink}
                               underline="none"
                             >
-                              <Typography variant="body2">{`${product.name} x ${product.order_line.quantity}`}</Typography>
+                              <Typography variant="body2" nowrap={true}>
+                                {`${product.order_line.name}`} X
+                                <Chip
+                                  variant="outlined"
+                                  sx={{ ml: 1 }}
+                                  label={` Quantity: ${product.order_line.quantity}`}
+                                />
+                              </Typography>
                             </Link>
                             <Typography variant="body2">
                               NPR {product.order_line.line_total}

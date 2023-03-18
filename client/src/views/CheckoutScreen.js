@@ -90,7 +90,7 @@ const CheckoutScreen = () => {
     if (cartItems.length === 0) {
       navigate("/cart");
     }
-  }, []);
+  }, [cartItems.length, navigate]);
 
   // After shipping address is successfully added to state
   // Order is created

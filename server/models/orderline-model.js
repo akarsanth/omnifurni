@@ -21,6 +21,16 @@ export default (sequelize, Sequelize) => {
         primaryKey: true,
       },
 
+      name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+
+      price: {
+        type: DataTypes.DECIMAL(10, 0),
+        allowNull: false,
+      },
+
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,

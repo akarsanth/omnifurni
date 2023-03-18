@@ -28,10 +28,16 @@ const getOrderById = asyncHandler(async (req, res) => {
     include: [
       {
         model: Product,
-        attributes: ["product_id", "name"],
+        attributes: ["product_id"],
 
         through: {
-          attributes: ["orderline_id", "quantity", "line_total"],
+          attributes: [
+            "orderline_id",
+            "quantity",
+            "line_total",
+            "name",
+            "price",
+          ],
         },
       },
 
@@ -139,6 +145,8 @@ const createOrder = asyncHandler(async (req, res) => {
       return {
         order_id: createdOrder.order_id,
         product_id: item.product_id,
+        name: item.name,
+        price: item.price,
         quantity: item.qty,
         line_total: item.qty * item.price,
       };
