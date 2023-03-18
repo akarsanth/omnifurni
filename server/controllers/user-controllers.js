@@ -128,6 +128,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const refreshToken = createRefreshToken({ id: user.user_id });
 
+  // setting refresh token in the cookie
   res.cookie("refreshtoken", refreshToken, {
     httpOnly: true,
     // path to get refresh token
@@ -140,7 +141,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @desc    Get Access Token
 // @route   POST /api/v1/user/refreshToken
 // @access  Public (anything can hit it)
-// to get access token from cookies
+// to get access token
 // refresh token is set in cookie
 // in every refresh of the page
 // a call is made to get the access token

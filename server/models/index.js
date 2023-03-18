@@ -28,7 +28,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// importing models
+// importing models functions
 import User from "./user-model.js";
 import DefaultAddress from "./defaultAddress-model.js";
 import Category from "./category-model.js";

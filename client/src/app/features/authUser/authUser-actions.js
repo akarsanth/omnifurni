@@ -9,6 +9,10 @@ import {
 // importing axios
 import axios from "axios";
 
+// Thunk
+// This is a function that delays an action until later
+// A function that does not return the action itself but
+// another function which eventually returns the action
 export const authUser = (loginDetails) => {
   return async (dispatch) => {
     const { email, password } = loginDetails;
@@ -20,7 +24,6 @@ export const authUser = (loginDetails) => {
       const config = {
         headers: {
           "Content-Type": "application/json",
-          // "Content-Type": "application/x-www-form-urlencoded",
         },
       };
 
@@ -37,7 +40,6 @@ export const authUser = (loginDetails) => {
 
       dispatch(setIsAuthenticated(true));
 
-      // from mern-auth
       localStorage.setItem("firstLogin", true);
     } catch (error) {
       // the error is first handled in

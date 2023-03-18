@@ -105,8 +105,6 @@ const cartSlice = createSlice({
         return item;
       });
 
-      console.log("here");
-
       //
       // state.totalQuantity = state.cartItems.reduce(
       //   (acc, item) => acc + item.qty,

@@ -42,7 +42,6 @@ const AccountScreenHeader = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(5),
 }));
 
-// const indexText = ["Dashboard", "Orders", "Address", "Account Details"];
 const locationList = {
   dashboard: {
     index: 0,

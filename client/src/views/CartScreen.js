@@ -150,6 +150,7 @@ const CartScreen = () => {
             <Separator />
           </Grid>
 
+          {/* summary */}
           <Grid item xs={1} md={4.5}>
             <TableContainer component={Box}>
               <Table sx={{ border: 0 }} aria-label="cart items table">

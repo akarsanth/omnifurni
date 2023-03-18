@@ -267,6 +267,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
       throw new Error("Product could not be found!");
     }
   } catch (error) {
+    console.log("here");
     throw new Error(error.message);
   }
 });
@@ -275,55 +276,60 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @route   POST /api/v1/products
 // @access  Protected/Admin
 const createProduct = asyncHandler(async (req, res) => {
-  const {
-    name,
-    description,
-    price,
-    imagePath,
-    countInStock,
-    category_id,
-    featured,
-  } = req.body;
+  try {
+    const {
+      name,
+      description,
+      price,
+      imagePath,
+      countInStock,
+      category_id,
+      featured,
+    } = req.body;
 
-  const product = {
-    name,
-    description,
-    price,
-    imagePath,
-    countInStock,
-    category_id,
-    user_id: req.user.id,
-    featured,
-  };
+    const product = {
+      name,
+      description,
+      price,
+      imagePath,
+      countInStock,
+      category_id,
+      user_id: req.user.id,
+      featured,
+    };
 
-  const newProduct = await Product.create(product);
+    const newProduct = await Product.create(product);
 
-  // Adding category info
-  const createdProduct = await Product.findByPk(newProduct.product_id, {
-    attributes: [
-      "product_id",
-      "name",
-      "description",
-      "price",
-      "imagePath",
-      "countInStock",
-      "user_id",
-      "category_id",
-      "featured",
-      [db.sequelize.col("category.name"), "category_name"],
-    ],
+    // Adding category info
+    const createdProduct = await Product.findByPk(newProduct.product_id, {
+      attributes: [
+        "product_id",
+        "name",
+        "description",
+        "price",
+        "imagePath",
+        "countInStock",
+        "user_id",
+        "category_id",
+        "featured",
+        [db.sequelize.col("category.name"), "category_name"],
+      ],
 
-    include: {
-      model: Category,
-      as: "category",
-      attributes: [],
-    },
-  });
+      include: {
+        model: Category,
+        as: "category",
+        attributes: [],
+      },
+    });
 
-  res.status(201).json({
-    message: "Product created Successfully",
-    createdProduct,
-  });
+    res.status(201).json({
+      message: "Product created Successfully",
+      createdProduct,
+    });
+  } catch (err) {
+    res.status(400);
+    throw new Error("Something went wrong!");
+  }
 });
 
 // @desc    To update product by id
@@ -342,6 +348,11 @@ const updateProduct = asyncHandler(async (req, res) => {
     } = req.body;
 
     const product = await Product.findByPk(req.params.id);
+
+    if (!product) {
+      res.status(404);
+      throw new Error("Product could not found!");
+    }
 
     if (product) {
       product.name = name;
@@ -382,9 +393,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     });
   } catch (err) {
     res.status(500);
-    throw new Error(
-      "Error occured while trying to update the product. Try Again!"
-    );
+    throw new Error(err.message);
   }
 });
 

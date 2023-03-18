@@ -145,7 +145,7 @@ const PaymentScreen = () => {
                     </RadioGroup>
                   </FormControl>
 
-                  {/* here */}
+                  {/* Payment */}
                   <Payment
                     value={value}
                     orderId={orderId}

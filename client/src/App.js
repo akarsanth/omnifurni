@@ -193,13 +193,14 @@ function App() {
                 </Route>
               </Route>
             </Routes>
-            {/* </Container> */}
-            <Footer />
+            {/* Routes end */}
 
             {/* Global message component */}
             {success && <Message message={success} />}
             {info && <Message message={info} severity="warning" />}
             {error && <Message message={error} severity="error" />}
+
+            <Footer />
           </Box>
         </Router>
       </CssBaseline>

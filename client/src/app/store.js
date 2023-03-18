@@ -4,16 +4,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import userRegisterReducer from "./features/userRegister/userRegister-slice";
 import authUserReducer from "./features/authUser/authUser-slice";
 import tokenReducer from "./features/token/token-slice";
-
 // product related
 import productListReducer from "./features/featuredProducts/productList-slice";
-
 // category related
 import categoryListReducer from "./features/category/categoryList-slice";
-
 // cart
 import cartReducer from "./features/cart/cart-slice";
-
 // Message (Notification)
 import messageReducer from "./features/message/message-slice";
 
