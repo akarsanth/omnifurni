@@ -16,6 +16,7 @@ import { notFound, errorHandler } from "./middlewares/error-middlewares.js";
 
 // db connection from index.js file
 import("./models/index.js");
+
 // import("./config/passportJWT-setup.js");
 
 // create app through express
@@ -80,7 +81,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 // setting port to listen for requests
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 
 // bind and listen the connections on the specified host and port
 app.listen(PORT, () => {
