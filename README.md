@@ -5,7 +5,7 @@
 **Name:** Omnifurni  
 **Version:** 1.0.0  
 **Author:** Aakarshan Thapa  
-**Description:** Omnifurni is a B2C (Business-to-Consumer) E-Commerce platform, developed as a final year project for a Bachelor's degree. This project aims to provide users with a seamless online shopping experience for furniture items, incorporating a single-vendor approach.
+**Description:** Omnifurni is a B2C (Business-to-Consumer) E-Commerce platform, developed as a final year project for my Bachelor's degree. This project aims to provide users with a seamless online shopping experience for furniture items, incorporating a single-vendor approach.
 
 ## Concurrent Frontend and Backend Runner
 
